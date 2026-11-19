@@ -14,7 +14,7 @@
     "sugar": "2.00",
     "serving_size": "1 plate(200g)",
     "description": "Light and healthy flattened rice cooked with onions, peanuts, curry leaves and mild spices.",
-    "image": "meals/poha.jpg"
+    "image": "media/meals/poha_ovrvtm"
   }
 },
 {
@@ -32,7 +32,7 @@
     "sugar": "3.00",
     "serving_size": "1 bowl(250 g)",
     "description": "Delicious semolina cooked with fresh vegetables, curry leaves and aromatic Indian spices.",
-    "image": "meals/VegUpma.jpg"
+    "image": "media/meals/VegUpma_crju6b"
   }
 },
 {
@@ -50,7 +50,7 @@
     "sugar": "5.00",
     "serving_size": "2 idlis with 1 bowl sambhar",
     "description": "Soft steamed rice cakes served with nutritious lentil-based sambhar and South Indian spices.",
-    "image": "meals/IdliSambar.jpg"
+    "image": "media/meals/IdliSambar_rjzxsj"
   }
 },
 {
@@ -68,7 +68,7 @@
     "sugar": "4.00",
     "serving_size": "2 medium chilla",
     "description": "Protein-rich gram flour pancakes prepared with fresh vegetables, herbs and mild spices.",
-    "image": "meals/BesanChila.jpg"
+    "image": "media/meals/BesanChila_oiplwu"
   }
 },
 {
@@ -86,7 +86,7 @@
     "sugar": "3.00",
     "serving_size": "2 medium chilla",
     "description": "Healthy pancakes made from ground moong dal, seasoned with fresh herbs and spices.",
-    "image": "meals/MoongDallChilla.jpg"
+    "image": "media/meals/MoongDallChilla_wwdgyc"
   }
 },
 {
@@ -104,7 +104,7 @@
     "sugar": "3.00",
     "serving_size": "1 medium",
     "description": "Whole wheat paratha stuffed with seasoned mashed potatoes and fresh herbs.",
-    "image": "meals/stuffedParatha.jpg"
+    "image": "media/meals/stuffedParatha_mmqu9y"
   }
 },
 {
@@ -122,7 +122,7 @@
     "sugar": "8.00",
     "serving_size": "1 bowl(250 g)",
     "description": "Wholesome oats porridge prepared with milk and topped with fresh fruits for a nutritious start to the day.",
-    "image": "meals/Oats.jpg"
+    "image": "media/meals/Oats_d59ix6"
   }
 },
 {
@@ -140,7 +140,7 @@
     "sugar": "3.00",
     "serving_size": "1 bowl(250 g)",
     "description": "Nutritious broken wheat cooked with fresh vegetables and mild spices.",
-    "image": "meals/Dalia.jpg"
+    "image": "media/meals/Dalia_xzqgno"
   }
 },
 {
@@ -158,7 +158,7 @@
     "sugar": "5.00",
     "serving_size": "2 sandwich",
     "description": "Fresh whole wheat bread filled with cucumber, tomato, onion, lettuce and healthy vegetable filling.",
-    "image": "meals/Sandwitch.jpg"
+    "image": "media/meals/Sandwitch_abbgi8"
   }
 },
 {
@@ -176,7 +176,7 @@
     "sugar": "5.00",
     "serving_size": "1 bowl(200 g)",
     "description": "Fresh mixed sprouts tossed with onion, tomato, lemon juice and flavorful Indian spices.",
-    "image": "meals/sproutschaat.jpg"
+    "image": "media/meals/sproutschaat_lyk7ei"
   }
 },
 {
@@ -194,7 +194,7 @@
     "sugar": "3.00",
     "serving_size": "1 plate(300 g)",
     "description": "A wholesome Indian meal of steamed rice served with flavorful yellow lentil dal, mild spices and fresh herbs.",
-    "image": "meals/daalrice.jpg"
+    "image": "media/meals/daalrice_zhr6xc"
   }
 },
 {
@@ -212,7 +212,7 @@
     "sugar": "4.00",
     "serving_size": "1 plate(300g)",
     "description": "Protein-rich kidney beans cooked in a traditional tomato-onion gravy and served with steamed rice.",
-    "image": "meals/RajmaChawal.jpg"
+    "image": "media/meals/RajmaChawal_drxsqd"
   }
 },
 {
@@ -230,7 +230,7 @@
     "sugar": "5.00",
     "serving_size": "2 serving(300g)",
     "description": "Soft whole wheat rotis served with fresh paneer cooked in a mildly spiced tomato-based gravy.",
-    "image": "meals/PaneerRoti.jpg"
+    "image": "media/meals/PaneerRoti_udk2bz"
   }
 },
 {
@@ -248,7 +248,7 @@
     "sugar": "5.00",
     "serving_size": "1 plate(300g)",
     "description": "Delicious chickpea curry prepared with aromatic Indian spices and served with steamed rice.",
-    "image": "meals/CholeRice.jpg"
+    "image": "media/meals/CholeRice_xvaewh"
   }
 },
 {
@@ -266,7 +266,7 @@
     "sugar": "6.00",
     "serving_size": "1 serving(300g)",
     "description": "A nutritious combination of seasonal vegetables cooked with Indian spices and served with whole wheat rotis.",
-    "image": "meals/Mixveg.jpg"
+    "image": "media/meals/Mixveg_vlicix"
   }
 },
 {
@@ -284,7 +284,7 @@
     "sugar": "4.00",
     "serving_size": "1 plate(300g)",
     "description": "Fragrant basmati rice cooked with fresh vegetables, whole spices and mild seasoning.",
-    "image": "meals/VegPulao.jpg"
+    "image": "media/meals/VegPulao_mbcewx"
   }
 },
 {
@@ -302,7 +302,7 @@
     "sugar": "3.00",
     "serving_size": "1 plate(300g)",
     "description": "Aromatic cumin-flavored rice served with nutritious lentil dal seasoned with traditional Indian spices.",
-    "image": "meals/JeeraRicedaal.jpg"
+    "image": "media/meals/JeeraRicedaal_qyr6nt"
   }
 },
 {
@@ -320,7 +320,7 @@
     "sugar": "3.00",
     "serving_size": "1 plate(300g)",
     "description": "Comforting one-pot meal prepared with rice, moong dal and mild spices for a wholesome lunch.",
-    "image": "meals/Khichdi.jpg"
+    "image": "media/meals/Khichdi_tqkhiz"
   }
 },
 {
@@ -338,7 +338,7 @@
     "sugar": "5.00",
     "serving_size": "1 plate(300g)",
     "description": "Traditional yogurt and gram flour curry seasoned with Indian spices, served with steamed rice.",
-    "image": "meals/kadiChawal.jpg"
+    "image": "media/meals/kadiChawal_lapzth"
   }
 },
 {
@@ -356,7 +356,7 @@
     "sugar": "5.00",
     "serving_size": "1 serving(300g)",
     "description": "Protein-rich soya chunks cooked in a flavorful onion-tomato gravy and served with whole wheat rotis.",
-    "image": "meals/Soyabeen_chunk.jpg"
+    "image": "media/meals/Soyabeen_chunk_agvj3p"
   }
 },
 {
@@ -374,7 +374,7 @@
     "sugar": "1.00",
     "serving_size": "1 bowl(30 g)",
     "description": "Light and crunchy fox nuts roasted with a little ghee and seasoned with mild spices for a healthy evening snack.",
-    "image": "meals/RoastedMakhana_PBa9kO9.jpg"
+    "image": "media/meals/RoastedMakhana_PBa9kO9_eqkbfr"
   }
 },
 {
@@ -392,7 +392,7 @@
     "sugar": "3.00",
     "serving_size": "3 pieces(150 g)",
     "description": "Soft and fluffy steamed gram flour snack tempered with mustard seeds, curry leaves and green chillies.",
-    "image": "meals/Dhokla.jpg"
+    "image": "media/meals/Dhokla_wqervv"
   }
 },
 {
@@ -410,7 +410,7 @@
     "sugar": "5.00",
     "serving_size": "2 sandwich",
     "description": "Fresh vegetable sandwich prepared with whole wheat bread, cucumber, tomato, onion and a light mint spread.",
-    "image": "meals/Sandwitch_JonIvM9.jpg"
+    "image": "media/meals/Sandwitch_JonIvM9_nq3vph"
   }
 },
 {
@@ -428,7 +428,7 @@
     "sugar": "5.00",
     "serving_size": "1 bowl(200g)",
     "description": "Fresh mixed sprouts tossed with chopped onion, tomato, lemon juice and flavorful Indian spices.",
-    "image": "meals/sproutschaat_wuKJoOn.jpg"
+    "image": "media/meals/sproutschaat_wuKJoOn_jazwgg"
   }
 },
 {
@@ -446,7 +446,7 @@
     "sugar": "2.00",
     "serving_size": "1 bowl(40 g)",
     "description": "Crunchy roasted chickpeas rich in plant protein and dietary fiber, seasoned with light spices.",
-    "image": "meals/RoastedMakhana.jpg"
+    "image": "media/meals/RoastedMakhana_p3zda4"
   }
 },
 {
@@ -464,7 +464,7 @@
     "sugar": "4.00",
     "serving_size": "1 bowl(150 g)",
     "description": "Protein-rich boiled peanuts tossed with onion, tomato, coriander, lemon juice and tangy spices.",
-    "image": "meals/Peenuts.jpg"
+    "image": "media/meals/Peenuts_mcwdhd"
   }
 },
 {
@@ -482,7 +482,7 @@
     "sugar": "20.00",
     "serving_size": "1 glass(250ml)",
     "description": "Creamy banana shake blended with chilled milk and naturally sweet banana for a refreshing and energizing drink.",
-    "image": "meals/BananaShake.jpg"
+    "image": "media/meals/BananaShake_upvh3a"
   }
 },
 {
@@ -500,7 +500,7 @@
     "sugar": "25.00",
     "serving_size": "1 glass(250ml)",
     "description": "Delicious mango shake prepared with ripe mango pulp and chilled milk for a naturally sweet and refreshing beverage.",
-    "image": "meals/MangoShake.jpg"
+    "image": "media/meals/MangoShake_om55xg"
   }
 },
 {
@@ -518,7 +518,7 @@
     "sugar": "18.00",
     "serving_size": "1 glass(250ml)",
     "description": "Smooth and refreshing strawberry smoothie blended with fresh strawberries and yogurt.",
-    "image": "meals/StrawberryShake.jpg"
+    "image": "media/meals/StrawberryShake_csgyp6"
   }
 },
 {
@@ -536,7 +536,7 @@
     "sugar": "32.00",
     "serving_size": "1 glass(250ml)",
     "description": "Naturally sweet dates blended with chilled milk to create an energy-rich and creamy beverage.",
-    "image": "meals/datesShak.jpg"
+    "image": "media/meals/datesShak_qiiebq"
   }
 },
 {
@@ -554,7 +554,7 @@
     "sugar": "22.00",
     "serving_size": "1 glass(250ml)",
     "description": "Nutritious milkshake blended with almonds, cashews, dates and other dry fruits for a rich and satisfying drink.",
-    "image": "meals/DryFruitsShake.jpg"
+    "image": "media/meals/DryFruitsShake_n2xo0i"
   }
 },
 {
@@ -572,7 +572,7 @@
     "sugar": "12.00",
     "serving_size": "1 glass(250ml)",
     "description": "Protein-rich shake prepared with milk, banana and protein powder to support daily protein intake.",
-    "image": "meals/ProtienShake.jpg"
+    "image": "media/meals/ProtienShake_v8tty9"
   }
 },
 {
@@ -590,7 +590,7 @@
     "sugar": "3.00",
     "serving_size": "2 rotis + 1 bowl dal (300 g)",
     "description": "A wholesome Indian dinner combining freshly prepared whole wheat rotis with nutritious lentil dal seasoned with traditional spices.",
-    "image": "meals/DaalRoti.jpg"
+    "image": "media/meals/DaalRoti_h3h0or"
   }
 },
 {
@@ -608,7 +608,7 @@
     "sugar": "5.00",
     "serving_size": "1 serving (300 g)",
     "description": "Crumbled paneer cooked with onions, tomatoes, capsicum and Indian spices, served with soft whole wheat rotis.",
-    "image": "meals/PaneerBhurji.jpg"
+    "image": "media/meals/PaneerBhurji_edig94"
   }
 },
 {
@@ -626,7 +626,7 @@
     "sugar": "6.00",
     "serving_size": "1 serving (300 g)",
     "description": "Seasonal vegetables cooked with mild Indian spices and served with freshly prepared whole wheat rotis.",
-    "image": "meals/MixVeg_u321D14.jpg"
+    "image": "media/meals/MixVeg_u321D14_wm0u1h"
   }
 },
 {
@@ -644,7 +644,7 @@
     "sugar": "3.00",
     "serving_size": "1 bowl(300 g)",
     "description": "Comforting one-pot meal prepared with rice, moong dal and fresh vegetables, lightly seasoned with Indian spices.",
-    "image": "meals/Khichdi_4EZ3OYy.jpg"
+    "image": "media/meals/Khichdi_4EZ3OYy_oou36e"
   }
 },
 {
@@ -662,7 +662,7 @@
     "sugar": "5.00",
     "serving_size": "1 serving (300 g)",
     "description": "Fresh spinach blended into a flavorful gravy with soft paneer cubes, served with whole wheat rotis.",
-    "image": "meals/PalakPaneerRoti.jpg"
+    "image": "media/meals/PalakPaneerRoti_jgs60a"
   }
 },
 {
@@ -680,7 +680,7 @@
     "sugar": "5.00",
     "serving_size": "1 plate(300g)",
     "description": "Aromatic basmati rice cooked with fresh vegetables and whole spices, served with refreshing cucumber raita.",
-    "image": "meals/VegPulao_nl74Cks.jpg"
+    "image": "media/meals/VegPulao_nl74Cks_xwiwl6"
   }
 },
 {
@@ -698,7 +698,7 @@
     "sugar": "3.00",
     "serving_size": "1 plate(300g)",
     "description": "Flavorful yellow lentils tempered with cumin, garlic and spices, served with steamed rice.",
-    "image": "meals/Daaltadka.jpg"
+    "image": "media/meals/Daaltadka_ndebgp"
   }
 },
 {
@@ -716,7 +716,7 @@
     "sugar": "5.00",
     "serving_size": "1 serving (300 g)",
     "description": "Protein-rich soya chunks cooked in a delicious onion-tomato gravy with aromatic Indian spices.",
-    "image": "meals/Soyabeen.jpg"
+    "image": "media/meals/Soyabeen_e3tgz2"
   }
 },
 {
@@ -734,7 +734,7 @@
     "sugar": "4.00",
     "serving_size": "1 serving (250 g)",
     "description": "Whole wheat stuffed paratha filled with seasoned potatoes, served with fresh creamy curd.",
-    "image": "meals/Stuffedparatha_pxK3MVX.jpg"
+    "image": "media/meals/Stuffedparatha_pxK3MVX_umvoea"
   }
 },
 {
@@ -752,7 +752,7 @@
     "sugar": "3.00",
     "serving_size": "1 bowl(250 g)",
     "description": "Healthy broken wheat cooked with seasonal vegetables and mild spices, making a light and nutritious dinner.",
-    "image": "meals/vegDalia.jpg"
+    "image": "media/meals/vegDalia_jghorp"
   }
 },
 {
