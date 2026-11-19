@@ -6,7 +6,6 @@
 {% block content %}
 
 <style>
-
 .edit-page {
     min-height: 85vh;
     padding: 65px 20px;
@@ -14,7 +13,7 @@
 }
 
 .edit-wrapper {
-    max-width: 950px;
+    max-width: 1000px;
     margin: auto;
 }
 
@@ -72,6 +71,34 @@
     color: var(--muted);
     font-size: 13px;
     margin-bottom: 18px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface-secondary);
+    color: var(--text);
+    outline: none;
+}
+
+.form-control:focus {
+    border-color: var(--gold);
+}
+
+.date-duration-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.field-label {
+    display: block;
+    color: var(--heading);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 9px;
 }
 
 /* DIET */
@@ -159,40 +186,76 @@
     font-weight: 600;
 }
 
-/* MEAL SELECTION */
+/* MEAL DATE SELECTOR */
 
-.meal-day-section {
-    margin-top: 22px;
+.meal-date-box {
     padding: 22px;
     border: 1px solid var(--border);
-    border-radius: 15px;
+    border-radius: 14px;
     background: var(--surface-secondary);
+    margin-bottom: 20px;
 }
 
-.meal-day-section[hidden] {
-    display: none !important;
-}
-
-.meal-day-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 18px;
-}
-
-.meal-day-heading h4 {
+.meal-date-box label {
+    display: block;
     color: var(--heading);
-    font-family: Georgia, serif;
-    font-size: 20px;
-    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
 }
 
-.meal-day-heading span {
-    font-size: 11px;
-    color: var(--gold);
-    font-weight: 700;
+.meal-date-box select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
 }
+
+.meal-date-box select:focus {
+    border-color: var(--gold);
+}
+
+.meal-date-info {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+/* MEAL CATEGORY TABS */
+
+.meal-category-tabs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.meal-category-tab {
+    padding: 13px 8px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface-secondary);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .25s ease;
+}
+
+.meal-category-tab:hover {
+    border-color: var(--gold);
+}
+
+.meal-category-tab.active {
+    background: var(--gold);
+    color: #17130c;
+    border-color: var(--gold);
+}
+
+/* MEAL CARDS */
 
 .meal-grid {
     display: grid;
@@ -297,6 +360,14 @@
     content: " ✓";
 }
 
+.no-meals {
+    padding: 25px;
+    text-align: center;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+}
+
 /* BUTTONS */
 
 .edit-button {
@@ -337,10 +408,11 @@
     margin-top: 12px;
 }
 
-/* RESPONSIVE */
+.form-errors ul {
+    padding-left: 20px;
+}
 
 @media(max-width: 768px) {
-
     .meal-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -349,10 +421,12 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .meal-category-tabs {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media(max-width: 576px) {
-
     .edit-card {
         padding: 24px 17px;
     }
@@ -365,21 +439,21 @@
         grid-template-columns: 1fr;
     }
 
-    .meal-day-section {
-        padding: 15px;
+    .date-duration-grid {
+        grid-template-columns: 1fr;
     }
 
+    .meal-category-tabs {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
-
 </style>
-
 
 <section class="edit-page">
 
     <div class="edit-wrapper">
 
         <div class="edit-heading">
-
             <span>YOUR SUBSCRIPTION, YOUR CHOICE</span>
 
             <h1>Edit Your Subscription</h1>
@@ -387,11 +461,9 @@
             <div class="edit-divider"></div>
 
             <p>
-                Manage your diet, delivery days and favourite meals.
+                Manage your subscription dates, delivery days and favourite meals.
             </p>
-
         </div>
-
 
         <div class="edit-card">
 
@@ -399,15 +471,60 @@
 
                 {% csrf_token %}
 
+                <!-- SUBSCRIPTION DATES -->
+
+                <div class="form-section">
+
+                    <h3>01. Subscription Duration</h3>
+
+                    <p>
+                        Choose when your subscription starts and how long it continues.
+                    </p>
+
+                    <div class="date-duration-grid">
+
+                        <div>
+                            <label class="field-label"
+                                   for="{{ form.start_date.id_for_label }}">
+                                Starting Date
+                            </label>
+
+                            {{ form.start_date }}
+
+                            {% if form.start_date.errors %}
+                                <div class="form-errors">
+                                    {{ form.start_date.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label class="field-label"
+                                   for="{{ form.duration_weeks.id_for_label }}">
+                                Subscription Duration
+                            </label>
+
+                            {{ form.duration_weeks }}
+
+                            {% if form.duration_weeks.errors %}
+                                <div class="form-errors">
+                                    {{ form.duration_weeks.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                </div>
+
                 <!-- DIET -->
 
                 <div class="form-section">
 
-                    <h3>01. Update Your Diet</h3>
+                    <h3>02. Update Your Diet</h3>
 
                     <p>
-                        Your diet preference is automatically updated
-                        according to your selected meals.
+                        Choose your preferred diet type.
                     </p>
 
                     {{ form.diet_preference }}
@@ -420,15 +537,15 @@
 
                 </div>
 
-
                 <!-- DELIVERY DAYS -->
 
                 <div class="form-section">
 
-                    <h3>02. Delivery Days</h3>
+                    <h3>03. Delivery Days</h3>
 
                     <p>
-                        Select the days on which you want your meals.
+                        Select the weekdays on which you want your meals.
+                        Your selected days will repeat throughout your subscription.
                     </p>
 
                     <div class="days-field">
@@ -450,135 +567,91 @@
 
                 </div>
 
-
-                <!-- MEALS -->
+                <!-- MEAL SELECTION -->
 
                 <div class="form-section">
 
-                    <h3>03. Manage Your Meals</h3>
+                    <h3>04. Manage Your Meals</h3>
 
                     <p>
-                        Your existing meals are already selected.
-                        Uncheck a meal to remove it or select another
-                        meal to add it.
+                        Select a delivery date and choose one or more meals for that date.
+                        Your existing future selections will already be selected.
                     </p>
 
-                    {% regroup form.meal_options by day as meal_day_groups %}
+                    <div class="meal-date-box">
 
-                    {% for group in meal_day_groups %}
+                        <label for="meal-date-select">
+                            Choose Delivery Date
+                        </label>
 
-                        <div class="meal-day-section"
-                             data-meal-day="{{ group.grouper }}"
-                             hidden>
+                        <select id="meal-date-select">
+                            <option value="">Select delivery days first</option>
+                        </select>
 
-                            <div class="meal-day-heading">
-
-                                <h4>
-                                    {{ group.list.0.day_name }}
-                                </h4>
-
-                                <span>CHOOSE YOUR MEALS</span>
-
-                            </div>
-
-
-                            <div class="meal-grid">
-
-                                {% for meal in group.list %}
-
-                                    <div class="meal-option">
-
-                                        <input
-                                            type="checkbox"
-                                            name="meal_{{ group.grouper }}"
-                                            id="meal_{{ group.grouper }}_{{ meal.id }}"
-                                            value="{{ meal.id }}"
-                                            {% if meal.selected %}checked{% endif %}
-                                        >
-
-                                        <label for="meal_{{ group.grouper }}_{{ meal.id }}">
-
-                                            {% if meal.image %}
-
-                                                <img
-                                                    src="{{ meal.image.url }}"
-                                                    class="meal-image"
-                                                    alt="{{ meal.name }}"
-                                                >
-
-                                            {% else %}
-
-                                                <div class="meal-image-placeholder">
-                                                    🍽️
-                                                </div>
-
-                                            {% endif %}
-
-
-                                            <div class="meal-details">
-
-                                                <div class="meal-category">
-                                                    {{ meal.category }}
-                                                </div>
-
-                                                <div class="meal-name">
-                                                    {{ meal.name }}
-                                                </div>
-
-                                                <div class="meal-diet">
-                                                    {{ meal.diet }}
-                                                </div>
-
-                                                <span class="meal-select-status">
-                                                    {% if meal.selected %}
-                                                        Selected
-                                                    {% else %}
-                                                        Add Meal
-                                                    {% endif %}
-                                                </span>
-
-                                            </div>
-
-                                        </label>
-
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
+                        <div class="meal-date-info" id="meal-date-info">
+                            Select your delivery days to see available dates.
                         </div>
 
-                    {% empty %}
+                    </div>
 
-                        <p class="text-muted">
-                            No meals are available in the current weekly menu.
-                        </p>
+                    <!-- CATEGORY TABS -->
 
-                    {% endfor %}
+                    <div class="meal-category-tabs">
+
+                        <button type="button"
+                                class="meal-category-tab active"
+                                data-category="breakfast">
+                            🍳 Breakfast
+                        </button>
+
+                        <button type="button"
+                                class="meal-category-tab"
+                                data-category="lunch">
+                            🍛 Lunch
+                        </button>
+
+                        <button type="button"
+                                class="meal-category-tab"
+                                data-category="evening_snacks">
+                            🥪 Evening Snacks
+                        </button>
+
+                        <button type="button"
+                                class="meal-category-tab"
+                                data-category="beverages">
+                            🥤 Shakes
+                        </button>
+
+                        <button type="button"
+                                class="meal-category-tab"
+                                data-category="dinner">
+                            🌙 Dinner
+                        </button>
+
+                    </div>
+
+                    <div id="meal-selection-area">
+
+                        <div class="no-meals">
+                            Please select your delivery days first.
+                        </div>
+
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="form-errors">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
 
                 </div>
-
-
-                {% if form.non_field_errors %}
-                    <div class="form-errors">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-
-
-                <!-- SAVE -->
 
                 <button class="edit-button" type="submit">
                     Save Subscription Changes →
                 </button>
 
-
-                <a href="{% url 'my_subscription' %}"
-                   class="back-link">
-
+                <a href="{% url 'my_subscription' %}" class="back-link">
                     ← Back to My Subscription
-
                 </a>
 
             </form>
@@ -590,22 +663,251 @@
 </section>
 
 
-<script>
+<!-- MEAL CARD TEMPLATE -->
 
+<template id="meal-card-template">
+
+    {% for meal in meals %}
+
+        <div class="meal-option"
+             data-meal-id="{{ meal.id }}"
+             data-meal-name="{{ meal.name }}"
+             data-meal-category="{{ meal.category_value }}"
+             data-meal-diet="{{ meal.diet }}">
+
+            {% if meal.image %}
+
+                <img
+                    src="{{ meal.image.url }}"
+                    class="meal-image"
+                    alt="{{ meal.name }}"
+                    loading="lazy"
+                >
+
+            {% else %}
+
+                <div class="meal-image-placeholder">
+                    🍽️
+                </div>
+
+            {% endif %}
+
+            <div class="meal-details">
+
+                <div class="meal-category">
+                    {{ meal.category }}
+                </div>
+
+                <div class="meal-name">
+                    {{ meal.name }}
+                </div>
+
+                <div class="meal-diet">
+                    {{ meal.diet_display }}
+                </div>
+
+                <span class="meal-select-status">
+                    Add Meal
+                </span>
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <div class="no-meals">
+            No meals are available right now.
+        </div>
+
+    {% endfor %}
+
+</template>
+
+
+{{ selected_meals_initial|json_script:"existing-meals-data" }}
+
+
+<script>
 document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("edit-subscription-form");
+
+    const startDateInput = document.getElementById(
+        "{{ form.start_date.id_for_label }}"
+    );
+
+    const durationInput = document.getElementById(
+        "{{ form.duration_weeks.id_for_label }}"
+    );
 
     const dayCheckboxes = document.querySelectorAll(
         'input[name="days"]'
     );
 
-    const mealSections = document.querySelectorAll(
-        ".meal-day-section"
+    const dietInputs = document.querySelectorAll(
+        'input[name="diet_preference"]'
     );
 
-    const countText = document.getElementById(
-        "selected-days-count"
+    const dateSelect = document.getElementById("meal-date-select");
+
+    const mealArea = document.getElementById("meal-selection-area");
+
+    const dateInfo = document.getElementById("meal-date-info");
+
+    const countText = document.getElementById("selected-days-count");
+
+    const mealTemplate = document.getElementById(
+        "meal-card-template"
     );
 
+    const categoryTabs = document.querySelectorAll(
+        ".meal-category-tab"
+    );
+
+    let activeCategory = "breakfast";
+
+    const existingMealsElement = document.getElementById(
+        "existing-meals-data"
+    );
+
+    const existingMeals = JSON.parse(
+        existingMealsElement.textContent
+    );
+
+    const selectedMeals = {};
+
+    // Load existing future meal selections.
+
+    existingMeals.forEach(function (item) {
+
+        if (!selectedMeals[item.date]) {
+            selectedMeals[item.date] = [];
+        }
+
+        const mealId = Number(item.meal_id);
+
+        if (!selectedMeals[item.date].includes(mealId)) {
+            selectedMeals[item.date].push(mealId);
+        }
+
+    });
+
+
+    // Format date as YYYY-MM-DD.
+
+    function formatDate(date) {
+
+        const year = date.getFullYear();
+
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+
+    }
+
+
+    // Convert YYYY-MM-DD into local Date object.
+
+    function parseDate(value) {
+
+        if (!value) return null;
+
+        const parts = value.split("-").map(Number);
+
+        return new Date(
+            parts[0],
+            parts[1] - 1,
+            parts[2]
+        );
+
+    }
+
+
+    // Display date in Indian format.
+
+    function formatDisplayDate(date) {
+
+        return date.toLocaleDateString("en-IN", {
+            weekday: "long",
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+
+    }
+
+
+    // Get selected diet.
+
+    function getSelectedDiet() {
+
+        const selected = document.querySelector(
+            'input[name="diet_preference"]:checked'
+        );
+
+        return selected ? selected.value : "";
+
+    }
+
+
+    // Generate upcoming delivery dates.
+
+    function getDeliveryDates() {
+
+        const startDate = parseDate(startDateInput.value);
+
+        const duration = Number(durationInput.value);
+
+        if (!startDate || !duration) {
+            return [];
+        }
+
+        const selectedDays = Array.from(dayCheckboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => Number(checkbox.value));
+
+        const endDate = new Date(startDate);
+
+        endDate.setDate(
+            endDate.getDate() + (duration * 7) - 1
+        );
+
+        const today = new Date();
+
+        today.setHours(0, 0, 0, 0);
+
+        const dates = [];
+
+        const current = new Date(startDate);
+
+        while (current <= endDate) {
+
+            const weekday = current.getDay() === 0
+                ? 6
+                : current.getDay() - 1;
+
+            if (
+                selectedDays.includes(weekday) &&
+                current >= today
+            ) {
+
+                dates.push(formatDate(current));
+
+            }
+
+            current.setDate(current.getDate() + 1);
+
+        }
+
+        return dates;
+
+    }
+
+
+    // Update selected delivery day count.
 
     function updateDayCount() {
 
@@ -622,62 +924,383 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    function updateMealSections() {
+    // Update delivery date dropdown.
 
-        mealSections.forEach(function (section) {
+    function updateDateOptions() {
 
-            const day = section.dataset.mealDay;
+        const dates = getDeliveryDates();
 
-            const dayCheckbox = Array.from(dayCheckboxes).find(
-                checkbox => checkbox.value === day
+        const previousDate = dateSelect.value;
+
+        dateSelect.innerHTML = "";
+
+        if (!dates.length) {
+
+            dateSelect.innerHTML =
+                '<option value="">No upcoming delivery dates</option>';
+
+            dateInfo.textContent =
+                "Choose a future start date and at least one delivery day.";
+
+            mealArea.innerHTML =
+                '<div class="no-meals">No upcoming delivery dates available.</div>';
+
+            return;
+
+        }
+
+        dates.forEach(function (dateString) {
+
+            const date = parseDate(dateString);
+
+            const option = document.createElement("option");
+
+            option.value = dateString;
+
+            option.textContent = formatDisplayDate(date);
+
+            dateSelect.appendChild(option);
+
+        });
+
+        if (dates.includes(previousDate)) {
+            dateSelect.value = previousDate;
+        }
+
+        renderMealsForDate(dateSelect.value);
+
+    }
+
+
+    // Check whether a meal matches selected diet.
+
+    function mealMatchesDiet(mealDiet, selectedDiet) {
+
+        if (
+            !selectedDiet ||
+            selectedDiet === "mixed" ||
+            selectedDiet === "all"
+        ) {
+            return true;
+        }
+
+        return mealDiet === selectedDiet;
+
+    }
+
+
+    // Render meals according to date, category and diet.
+
+    function renderMealsForDate(dateString) {
+
+        mealArea.innerHTML = "";
+
+        if (!dateString) {
+            return;
+        }
+
+        const selectedDiet = getSelectedDiet();
+
+        const cards = mealTemplate.content.querySelectorAll(
+            ".meal-option"
+        );
+
+        const grid = document.createElement("div");
+
+        grid.className = "meal-grid";
+
+        let visibleCount = 0;
+
+        cards.forEach(function (originalCard) {
+
+            const mealId = Number(originalCard.dataset.mealId);
+
+            const mealDiet = originalCard.dataset.mealDiet;
+
+            const mealCategory = originalCard.dataset.mealCategory;
+
+            // Apply category and diet filters.
+
+            if (
+                mealCategory !== activeCategory ||
+                !mealMatchesDiet(mealDiet, selectedDiet)
+            ) {
+                return;
+            }
+
+            visibleCount++;
+
+            const card = originalCard.cloneNode(true);
+
+            const input = document.createElement("input");
+
+            const inputId = `meal_${dateString}_${mealId}`;
+
+            input.type = "checkbox";
+
+            input.name = `meal_${dateString}`;
+
+            input.value = mealId;
+
+            input.id = inputId;
+
+            input.checked =
+                selectedMeals[dateString] &&
+                selectedMeals[dateString].includes(mealId);
+
+            const label = document.createElement("label");
+
+            label.htmlFor = inputId;
+
+            while (card.firstChild) {
+                label.appendChild(card.firstChild);
+            }
+
+            const status = label.querySelector(
+                ".meal-select-status"
             );
 
-            const isSelected = dayCheckbox && dayCheckbox.checked;
+            function updateStatus() {
 
-            section.hidden = !isSelected;
+                status.textContent = input.checked
+                    ? "Selected"
+                    : "Add Meal";
+
+            }
+
+            updateStatus();
+
+            // Save selection in JavaScript object.
+
+            input.addEventListener("change", function () {
+
+                if (!selectedMeals[dateString]) {
+                    selectedMeals[dateString] = [];
+                }
+
+                if (this.checked) {
+
+                    if (!selectedMeals[dateString].includes(mealId)) {
+                        selectedMeals[dateString].push(mealId);
+                    }
+
+                } else {
+
+                    selectedMeals[dateString] =
+                        selectedMeals[dateString].filter(
+                            id => id !== mealId
+                        );
+
+                }
+
+                updateStatus();
+
+                updateDateInfo(dateString);
+
+            });
+
+            const wrapper = document.createElement("div");
+
+            wrapper.className = "meal-option";
+
+            wrapper.appendChild(input);
+
+            wrapper.appendChild(label);
+
+            grid.appendChild(wrapper);
+
+        });
+
+
+        if (!visibleCount) {
+
+            mealArea.innerHTML =
+                '<div class="no-meals">No meals available in this category for your selected diet.</div>';
+
+        } else {
+
+            mealArea.appendChild(grid);
+
+        }
+
+        updateDateInfo(dateString);
+
+    }
+
+
+    // Show selected meal count for the chosen date.
+
+    function updateDateInfo(dateString) {
+
+        const date = parseDate(dateString);
+
+        if (!date) {
+            return;
+        }
+
+        const selectedCount = selectedMeals[dateString]
+            ? selectedMeals[dateString].length
+            : 0;
+
+        dateInfo.textContent =
+            formatDisplayDate(date) +
+            " • " +
+            selectedCount +
+            " meal(s) selected";
+
+    }
+
+
+    // Category tab click events.
+
+    categoryTabs.forEach(function (tab) {
+
+        tab.addEventListener("click", function () {
+
+            categoryTabs.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            activeCategory = this.dataset.category;
+
+            renderMealsForDate(dateSelect.value);
+
+        });
+
+    });
+
+
+    // Generate hidden POST inputs for all selected meals.
+
+    function updateHiddenMealFields() {
+
+        document.querySelectorAll(
+            ".generated-meal-input"
+        ).forEach(input => input.remove());
+
+        Object.keys(selectedMeals).forEach(function (dateString) {
+
+            selectedMeals[dateString].forEach(function (mealId) {
+
+                const input = document.createElement("input");
+
+                input.type = "hidden";
+
+                input.name = `meal_${dateString}`;
+
+                input.value = mealId;
+
+                input.className = "generated-meal-input";
+
+                form.appendChild(input);
+
+            });
 
         });
 
     }
 
 
+    // Date dropdown change.
+
+    dateSelect.addEventListener("change", function () {
+
+        renderMealsForDate(this.value);
+
+    });
+
+
+    // Start date and duration change.
+
+    startDateInput.addEventListener("change", updateDateOptions);
+
+    durationInput.addEventListener("change", updateDateOptions);
+
+
+    // Delivery day change.
+
     dayCheckboxes.forEach(function (checkbox) {
 
         checkbox.addEventListener("change", function () {
 
             updateDayCount();
-            updateMealSections();
+
+            updateDateOptions();
 
         });
 
     });
 
 
-    // Update meal status text
-    document.querySelectorAll(
-        ".meal-option input"
-    ).forEach(function (checkbox) {
+    // Diet preference change.
 
-        checkbox.addEventListener("change", function () {
+    dietInputs.forEach(function (input) {
 
-            const status = this.nextElementSibling.querySelector(
-                ".meal-select-status"
+        input.addEventListener("change", function () {
+
+            renderMealsForDate(dateSelect.value);
+
+        });
+
+    });
+
+
+    // Validate before form submission.
+
+    form.addEventListener("submit", function (event) {
+
+        const dates = getDeliveryDates();
+
+        if (!dates.length) {
+
+            event.preventDefault();
+
+            alert("Please select at least one upcoming delivery date.");
+
+            return;
+
+        }
+
+        const missingDates = dates.filter(function (date) {
+
+            return !selectedMeals[date] ||
+                selectedMeals[date].length === 0;
+
+        });
+
+        if (missingDates.length) {
+
+            event.preventDefault();
+
+            alert(
+                "Please select at least one meal for every delivery date. Missing: " +
+                missingDates.map(date =>
+                    formatDisplayDate(parseDate(date))
+                ).join(", ")
             );
 
-            status.textContent = this.checked
-                ? "Selected"
-                : "Add Meal";
+            dateSelect.value = missingDates[0];
 
-        });
+            renderMealsForDate(missingDates[0]);
+
+            return;
+
+        }
+
+        updateHiddenMealFields();
 
     });
 
 
+    // Initial setup.
+
     updateDayCount();
-    updateMealSections();
+
+    updateDateOptions();
 
 });
-
 </script>
 
 {% endblock %}

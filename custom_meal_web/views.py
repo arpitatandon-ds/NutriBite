@@ -1,5 +1,5 @@
 
-from datetime import timedelta
+from datetime import timedelta, date
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -42,41 +42,44 @@ def home(request):
 # MENU
 # ==========================================
 
+# ==========================================
+# MENU
+# ==========================================
+
 def menu_view(request):
 
-    all_menus = WeeklyMenu.objects.order_by("-week_start")
+    meals = Meal.objects.all().order_by(
+        "category",
+        "name"
+    )
 
-    selected_week = request.GET.get("week")
+    selected_category = request.GET.get("category", "")
+    selected_diet = request.GET.get("diet", "")
 
-    menu = all_menus.first()
+    valid_categories = dict(Meal.CATEGORY_CHOICES)
+    valid_diets = dict(Meal.DIET_CHOICES)
 
-    if selected_week:
-        menu = all_menus.filter(id=selected_week).first() or menu
+    if selected_category in valid_categories:
+        meals = meals.filter(category=selected_category)
+    else:
+        selected_category = ""
 
-    menu_items = MenuItem.objects.none()
+    if selected_diet in valid_diets:
+        meals = meals.filter(diet_type=selected_diet)
+    else:
+        selected_diet = ""
 
-    if menu:
-        menu_items = menu.items.select_related(
-            "meal"
-        ).order_by(
-            "day_of_week",
-            "meal__category",
-            "meal__name"
-        )
-
-    diet = request.GET.get("diet")
-
-    if diet:
-        menu_items = menu_items.filter(
-            meal__diet_type=diet
-        )
-
-    return render(request, "main/menu.html", {
-        "menu": menu,
-        "menus": all_menus,
-        "menu_items": menu_items,
-        "diet": diet,
-    })
+    return render(
+        request,
+        "main/menu.html",
+        {
+            "meals": meals,
+            "categories": Meal.CATEGORY_CHOICES,
+            "diet_choices": Meal.DIET_CHOICES,
+            "selected_category": selected_category,
+            "selected_diet": selected_diet,
+        }
+    )
 
 
 # ==========================================
@@ -115,6 +118,8 @@ def register(request):
 # CREATE SUBSCRIPTION
 # ==========================================
 
+
+
 @login_required
 def subscribe(request):
 
@@ -125,7 +130,7 @@ def subscribe(request):
 
         messages.info(
             request,
-            "You already have a subscription. Edit it from My Subscription."
+            "You already have an active subscription."
         )
 
         return redirect("edit_subscription")
@@ -138,45 +143,33 @@ def subscribe(request):
 
             with transaction.atomic():
 
-                subscription = form.save(
-                    user=request.user
-                )
-
-                menu = form.menu
+                subscription = form.save(user=request.user)
 
                 selected_meals = form.cleaned_data.get(
                     "selected_meals", {}
                 )
 
-                for day, meal_ids in selected_meals.items():
+                for date_string, meal_ids in selected_meals.items():
 
-                    day = int(day)
-
-                    order_date = (
-                        menu.week_start + timedelta(days=day)
-                    )
+                    order_date = date.fromisoformat(date_string)
 
                     for meal_id in meal_ids:
 
-                        item = MenuItem.objects.filter(
-                            menu=menu,
-                            day_of_week=day,
-                            meal_id=meal_id
-                        ).select_related(
-                            "meal"
+                        meal = Meal.objects.filter(
+                            id=meal_id
                         ).first()
 
-                        if item:
+                        if meal:
 
                             Order.objects.create(
                                 subscription=subscription,
-                                meal=item.meal,
+                                meal=meal,
                                 date=order_date
                             )
 
             messages.success(
                 request,
-                "Subscription created successfully!"
+                "Your subscription has been created successfully!"
             )
 
             return redirect("my_subscription")
@@ -185,33 +178,28 @@ def subscribe(request):
 
         form = SubscriptionForm()
 
-    meals = Meal.objects.all().order_by(
-        "diet_type",
-        "name"
-    )
-
     return render(
         request,
         "main/subscribe.html",
         {
             "form": form,
-            "meals": meals
+            "meals": form.meal_options,
+            "selected_meals_initial": form.selected_meals_initial,
         }
     )
+
 
 
 # ==========================================
 # EDIT SUBSCRIPTION
 # ==========================================
 
+
 @login_required
 def edit_subscription(request):
 
     try:
-
-        subscription = get_current_subscription(
-            request.user
-        )
+        subscription = get_current_subscription(request.user)
 
     except Http404:
 
@@ -235,116 +223,83 @@ def edit_subscription(request):
 
                 updated_subscription = form.save()
 
-                menu = form.menu
+                selected_meals = form.cleaned_data.get(
+                    "selected_meals", {}
+                )
 
-                if menu:
+                # Prepare all selected date-meal combinations
+                selected_pairs = set()
 
-                    today = timezone.localdate()
+                for date_string, meal_ids in selected_meals.items():
 
-                    selected_meals = form.cleaned_data.get(
-                        "selected_meals", {}
+                    for meal_id in meal_ids:
+
+                        selected_pairs.add(
+                            (date_string, int(meal_id))
+                        )
+
+                today = timezone.localdate()
+
+                # Existing future orders
+                future_orders = updated_subscription.orders.filter(
+                    date__gte=today,
+                    status__in=["pending", "paused"]
+                )
+
+                # Cancel future orders removed by the user
+                for order in future_orders:
+
+                    order_pair = (
+                        order.date.isoformat(),
+                        order.meal_id
                     )
 
-                    # Selected day + meal combinations
-                    selected_pairs = set()
+                    if order.meal_id and order_pair not in selected_pairs:
 
-                    for day, meal_ids in selected_meals.items():
+                        order.status = "cancelled"
 
-                        day = int(day)
+                        order.save(
+                            update_fields=["status"]
+                        )
+
+                # Create missing selected orders
+                if updated_subscription.active:
+
+                    desired_status = (
+                        "paused"
+                        if updated_subscription.paused
+                        else "pending"
+                    )
+
+                    for date_string, meal_ids in selected_meals.items():
+
+                        order_date = date.fromisoformat(date_string)
+
+                        if order_date < today:
+                            continue
 
                         for meal_id in meal_ids:
 
-                            selected_pairs.add(
-                                (day, int(meal_id))
-                            )
-
-                    week_end = (
-                        menu.week_start + timedelta(days=6)
-                    )
-
-                    # Cancel removed pending/paused orders
-                    existing_orders = updated_subscription.orders.filter(
-                        date__gte=max(today, menu.week_start),
-                        date__lte=week_end,
-                        status__in=["pending", "paused"]
-                    ).select_related(
-                        "meal"
-                    )
-
-                    for order in existing_orders:
-
-                        day = (
-                            order.date - menu.week_start
-                        ).days
-
-                        if order.meal_id and (
-                            day,
-                            order.meal_id
-                        ) not in selected_pairs:
-
-                            order.status = "cancelled"
-
-                            order.save(
-                                update_fields=["status"]
-                            )
-
-                    # Add or reactivate selected meals
-                    if updated_subscription.active:
-
-                        desired_status = (
-                            "paused"
-                            if updated_subscription.paused
-                            else "pending"
-                        )
-
-                        for day, meal_id in selected_pairs:
-
-                            order_date = (
-                                menu.week_start + timedelta(days=day)
-                            )
-
-                            if order_date < today:
-                                continue
-
-                            item = MenuItem.objects.filter(
-                                menu=menu,
-                                day_of_week=day,
+                            # Avoid duplicate orders.
+                            # Previously cancelled orders are not
+                            # automatically reactivated.
+                            existing_order = updated_subscription.orders.filter(
+                                date=order_date,
                                 meal_id=meal_id
-                            ).select_related(
-                                "meal"
-                            ).first()
-
-                            if not item:
-                                continue
-
-                            existing_order = (
-                                updated_subscription.orders.filter(
-                                    date=order_date,
-                                    meal_id=meal_id
-                                ).order_by("-created_at").first()
-                            )
+                            ).exists()
 
                             if existing_order:
+                                continue
 
-                                if existing_order.status in [
-                                    "cancelled",
-                                    "pending",
-                                    "paused"
-                                ]:
+                            meal = Meal.objects.filter(
+                                id=meal_id
+                            ).first()
 
-                                    if existing_order.status != desired_status:
-
-                                        existing_order.status = desired_status
-
-                                        existing_order.save(
-                                            update_fields=["status"]
-                                        )
-
-                            else:
+                            if meal:
 
                                 Order.objects.create(
                                     subscription=updated_subscription,
-                                    meal=item.meal,
+                                    meal=meal,
                                     date=order_date,
                                     status=desired_status
                                 )
@@ -367,7 +322,9 @@ def edit_subscription(request):
         "main/edit_subscription.html",
         {
             "form": form,
-            "sub": subscription
+            "sub": subscription,
+            "meals": form.meal_options,
+            "selected_meals_initial": form.selected_meals_initial,
         }
     )
 
@@ -741,51 +698,47 @@ def skip_meal(request, order_id):
 # CHANGE DIET
 # ==========================================
 
+
 @login_required
 def change_diet(request):
 
     try:
-
-        subscription = get_current_subscription(
-            request.user
-        )
+        subscription = get_current_subscription(request.user)
 
     except Http404:
-
         messages.error(
             request,
             "No active subscription found."
         )
-
         return redirect("my_subscription")
 
     if request.method == "POST":
 
         new_diet = request.POST.get("diet")
 
-        if new_diet in dict(
+        valid_diets = dict(
             Subscription.SUBSCRIPTION_DIET_CHOICES
-        ):
+        )
 
-            subscription.diet_preference = new_diet
-
-            subscription.save(
-                update_fields=["diet_preference"]
-            )
-
-            messages.success(
-                request,
-                "Diet preference updated successfully."
-            )
-
-        else:
-
+        if new_diet not in valid_diets:
             messages.error(
                 request,
                 "Invalid diet preference."
             )
+            return redirect("my_subscription")
 
-        return redirect("my_subscription")
+        subscription.diet_preference = new_diet
+
+        subscription.save(
+            update_fields=["diet_preference"]
+        )
+
+        messages.success(
+            request,
+            "Diet preference updated. Please review your future meals."
+        )
+
+        return redirect("edit_subscription")
 
     return render(
         request,
@@ -795,6 +748,7 @@ def change_diet(request):
             "choices": Subscription.SUBSCRIPTION_DIET_CHOICES,
         }
     )
+
 
 
 # ==========================================

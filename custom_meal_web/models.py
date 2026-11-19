@@ -1,7 +1,9 @@
+
 from django.db import models
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
 
 class Meal(models.Model):
 
@@ -32,11 +34,7 @@ class Meal(models.Model):
         choices=DIET_CHOICES
     )
 
-    # Nutrition information
-    calories = models.IntegerField(
-        null=True,
-        blank=True
-    )
+    calories = models.IntegerField(null=True, blank=True)
 
     protein = models.DecimalField(
         max_digits=7,
@@ -89,6 +87,10 @@ class Meal(models.Model):
     def __str__(self):
         return f"{self.name} ({self.get_diet_type_display()})"
 
+
+# Retained temporarily for compatibility with existing pages.
+# We will remove these after updating the related views and templates.
+
 class WeeklyMenu(models.Model):
 
     week_start = models.DateField(
@@ -97,6 +99,7 @@ class WeeklyMenu(models.Model):
 
     def __str__(self):
         return f"Weekly Menu starting {self.week_start}"
+
 
 class MenuItem(models.Model):
 
@@ -134,6 +137,7 @@ class MenuItem(models.Model):
             f"{self.get_day_of_week_display()} : {self.meal.name}"
         )
 
+
 class Subscription(models.Model):
 
     SUBSCRIPTION_DIET_CHOICES = [
@@ -141,6 +145,13 @@ class Subscription(models.Model):
         ("non_veg", "Non-Vegetarian"),
         ("high_protein", "High Protein"),
         ("mixed", "Mixed Diet"),
+    ]
+
+    DURATION_CHOICES = [
+        (1, "1 Week"),
+        (2, "2 Weeks"),
+        (3, "3 Weeks"),
+        (4, "4 Weeks"),
     ]
 
     user = models.ForeignKey(
@@ -153,9 +164,24 @@ class Subscription(models.Model):
         choices=SUBSCRIPTION_DIET_CHOICES
     )
 
+    # User-selected subscription start date.
+    # Nullable temporarily to preserve existing subscriptions.
+    start_date = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    # User-selected subscription duration.
+    duration_weeks = models.PositiveSmallIntegerField(
+        choices=DURATION_CHOICES,
+        default=1
+    )
+
     selected_days = models.CharField(
         max_length=50,
-        help_text="Comma-separated days as 0=Mon..6=Sun"
+        blank=True,
+        default="",
+        help_text="Comma-separated days: 0=Mon to 6=Sun"
     )
 
     active = models.BooleanField(default=True)
@@ -164,7 +190,10 @@ class Subscription(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    cancelled_at = models.DateTimeField(null=True,blank=True)
+    cancelled_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
 
     def selected_days_list(self):
 
@@ -172,16 +201,31 @@ class Subscription(models.Model):
             return []
 
         return [
-            int(x)
-            for x in self.selected_days.split(",")
-            if x.strip().isdigit()
+            int(day)
+            for day in self.selected_days.split(",")
+            if day.strip().isdigit()
         ]
+
+    @property
+    def end_date(self):
+
+        if not self.start_date:
+            return None
+
+        from datetime import timedelta
+
+        return (
+            self.start_date
+            + timedelta(weeks=self.duration_weeks)
+            - timedelta(days=1)
+        )
 
     def __str__(self):
         return (
             f"Subscription({self.user.username}) - "
             f"{self.get_diet_preference_display()}"
         )
+
 
 class Order(models.Model):
 
@@ -222,6 +266,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
+
         if self.meal:
             self.meal_name = self.meal.name
 
