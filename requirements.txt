@@ -1,4 +1,5 @@
 Django==6.1.3
 Pillow
+django-cloudinary-storage
 gunicorn
 whitenoise
