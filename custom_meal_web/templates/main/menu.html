@@ -1,0 +1,948 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Our Menu | NutriBite{% endblock %}
+{% block main_class %}container-fluid p-0{% endblock %}
+
+{% block content %}
+
+<style>
+.menu-page {
+    padding: 25px 7%;
+    min-height: 80vh;
+    background: var(--page-bg);
+}
+
+.menu-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 25px;
+}
+
+.menu-eyebrow {
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 3px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.menu-header h1 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: clamp(32px, 5vw, 46px);
+    margin: 9px 0;
+    font-weight: 600;
+}
+
+.menu-header p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+    margin: auto;
+}
+
+.menu-divider {
+    width: 55px;
+    height: 3px;
+    background: var(--gold);
+    margin: 15px auto;
+    border-radius: 5px;
+}
+
+/* WEEK + DAY SELECTOR */
+
+.combined-selector {
+    max-width: 1100px;
+    margin: 0 auto 25px;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    box-shadow: 0 3px 12px var(--shadow);
+}
+
+.combined-week {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.combined-week > span {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.combined-week form {
+    margin: 0;
+}
+
+.week-select {
+    min-width: 175px;
+    max-width: 210px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface-secondary);
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+}
+
+.combined-days {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    flex: 1;
+}
+
+.day-tabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.day-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.day-tab {
+    flex: 1;
+    min-width: 55px;
+    padding: 8px 7px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface-secondary);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+    white-space: nowrap;
+}
+
+.day-tab:hover {
+    border-color: var(--gold);
+}
+
+.day-tab.active {
+    background: var(--gold);
+    color: #fff;
+    border-color: var(--gold);
+}
+
+.day-navigation {
+    width: 27px;
+    height: 27px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface-secondary);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .2s ease;
+}
+
+.day-navigation:hover:not(:disabled) {
+    background: var(--gold);
+    color: white;
+    border-color: var(--gold);
+}
+
+.day-navigation:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+/* SELECTED DAY */
+
+.selected-day-heading {
+    max-width: 1100px;
+    margin: 0 auto 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.selected-day-heading h2 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: 23px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.selected-day-heading span {
+    height: 1px;
+    flex: 1;
+    background: var(--border);
+}
+
+/* MEAL GRID AND CARDS */
+
+.meal-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.menu-card {
+    height: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: .3s ease;
+    box-shadow: 0 3px 12px var(--shadow);
+}
+
+.menu-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold);
+    box-shadow: 0 8px 18px var(--shadow);
+}
+
+.meal-image-wrapper {
+    height: 140px;
+    overflow: hidden;
+    background: var(--surface-secondary);
+}
+
+.meal-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+}
+
+.menu-card:hover .meal-image {
+    transform: scale(1.05);
+}
+
+.meal-placeholder {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 38px;
+}
+
+.meal-content {
+    padding: 14px;
+}
+
+.meal-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+}
+
+/* CATEGORY BADGE INSIDE EACH CARD */
+
+.meal-day {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: var(--surface-secondary);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.meal-symbol {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: var(--surface-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+}
+
+.menu-card h4 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: 17px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.meal-meta {
+    margin-bottom: 8px;
+}
+
+.diet-badge {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: var(--surface-secondary);
+    color: var(--text);
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.meal-description {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.6;
+    min-height: 35px;
+    margin-bottom: 12px;
+}
+
+.nutrition-info {
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+}
+
+.nutrition-title {
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 9px;
+}
+
+.nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px 5px;
+}
+
+.nutrition-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.nutrition-item span {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.nutrition-item strong {
+    color: var(--heading);
+    font-size: 11px;
+}
+
+.meal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 7px;
+}
+
+.meal-footer span {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.calorie-value {
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.day-panel[hidden] {
+    display: none !important;
+}
+
+/* NO MEALS */
+
+.no-meals {
+    max-width: 800px;
+    margin: 25px auto;
+    padding: 30px;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--muted);
+}
+
+.no-meals h3 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+}
+
+/* EMPTY MENU */
+
+.empty-menu {
+    max-width: 800px;
+    margin: 35px auto;
+    padding: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 25px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 8px 25px var(--shadow);
+}
+
+.empty-menu h3 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: 25px;
+    margin: 13px 0;
+}
+
+.empty-menu p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.empty-menu-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 13px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 900px) {
+    .combined-selector {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .combined-week {
+        justify-content: space-between;
+    }
+
+    .week-select {
+        max-width: 100%;
+    }
+
+    .combined-days {
+        width: 100%;
+    }
+}
+
+@media(max-width: 576px) {
+    .menu-page {
+        padding: 35px 5%;
+    }
+
+    .combined-selector {
+        padding: 12px;
+    }
+
+    .combined-week {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .combined-week form,
+    .week-select {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .day-tabs {
+        gap: 5px;
+    }
+
+    .day-tab {
+        min-width: 55px;
+        padding: 8px 6px;
+        font-size: 10px;
+    }
+
+    .meal-image-wrapper {
+        height: 155px;
+    }
+
+    .meal-content {
+        padding: 12px;
+    }
+
+    .empty-menu {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}
+</style>
+
+<section class="menu-page">
+
+    <div class="menu-header">
+        <span class="menu-eyebrow">
+            Fresh • Healthy • Delicious
+        </span>
+
+        <h1>Our Weekly Menu</h1>
+
+        <div class="menu-divider"></div>
+
+        <p>
+            Explore our freshly prepared meals, thoughtfully
+            organized throughout your week.
+        </p>
+    </div>
+        {% if menu %}
+
+        {% if menu_items %}
+            {% regroup menu_items by day_of_week as day_groups %}
+        {% endif %}
+
+        <!-- WEEK + DAY SELECTOR -->
+
+        <div class="combined-selector">
+
+            <div class="combined-week">
+
+                <span>SELECT WEEK</span>
+
+                <form method="GET" id="weekForm">
+
+                    {% if diet %}
+                        <input type="hidden" name="diet" value="{{ diet }}">
+                    {% endif %}
+
+                    <select
+                        name="week"
+                        class="week-select"
+                        onchange="this.form.submit()"
+                    >
+                        {% for week in menus %}
+                            <option
+                                value="{{ week.id }}"
+                                {% if week.id == menu.id %}selected{% endif %}
+                            >
+                                Week Starting - {{ week.week_start|date:"d M Y" }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                </form>
+
+            </div>
+
+            <!-- DAY SELECTOR -->
+
+            {% if menu_items %}
+
+                <div class="combined-days">
+
+                    <button
+                        type="button"
+                        class="day-navigation"
+                        id="prevDay"
+                        aria-label="Previous day"
+                    >
+                        &#8249;
+                    </button>
+
+                    <div class="day-tabs" id="dayTabs">
+
+                        {% for day_group in day_groups %}
+
+                            <button
+                                type="button"
+                                class="day-tab {% if forloop.first %}active{% endif %}"
+                                data-day-index="{{ forloop.counter0 }}"
+                                aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                            >
+                                {{ day_group.list.0.get_day_of_week_display }}
+                            </button>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="day-navigation"
+                        id="nextDay"
+                        aria-label="Next day"
+                    >
+                        &#8250;
+                    </button>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- DAY-WISE MEAL PANELS -->
+
+        {% if menu_items %}
+
+            {% for day_group in day_groups %}
+
+                <div
+                    class="day-panel"
+                    data-day-panel="{{ forloop.counter0 }}"
+                    {% if not forloop.first %}hidden{% endif %}
+                >
+
+                    <div class="selected-day-heading">
+
+                        <h2>
+                            {{ day_group.list.0.get_day_of_week_display }}'s Menu
+                        </h2>
+
+                        <span></span>
+
+                    </div>
+
+                    <!-- ALL MEALS IN ONE GRID -->
+
+                    <div class="row g-3 meal-grid">
+
+                        {% for item in day_group.list %}
+
+                            <div class="col-lg-4 col-md-6">
+
+                                <div class="menu-card">
+
+                                    <!-- MEAL IMAGE -->
+
+                                    <div class="meal-image-wrapper">
+
+                                        {% if item.meal.image %}
+
+                                            <img
+                                                src="{{ item.meal.image.url }}"
+                                                alt="{{ item.meal.name }}"
+                                                class="meal-image"
+                                                loading="lazy"
+                                            >
+
+                                        {% else %}
+
+                                            <div class="meal-placeholder">
+                                                🥗
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <!-- MEAL DETAILS -->
+
+                                    <div class="meal-content">
+
+                                        <div class="meal-top">
+
+                                            <!-- CATEGORY NAME INSIDE CARD -->
+
+                                            <span class="meal-day">
+
+                                                {% if item.meal.category == "breakfast" %}
+                                                    🌅
+                                                {% elif item.meal.category == "lunch" %}
+                                                    🍱
+                                                {% elif item.meal.category == "evening_snacks" %}
+                                                    🥗
+                                                {% elif item.meal.category == "beverages" %}
+                                                    🥤
+                                                {% elif item.meal.category == "dinner" %}
+                                                    🌙
+                                                {% else %}
+                                                    🍽️
+                                                {% endif %}
+
+                                                {{ item.meal.get_category_display }}
+
+                                            </span>
+
+                                            <div class="meal-symbol">
+                                                🍽️
+                                            </div>
+
+                                        </div>
+
+                                        <h4>{{ item.meal.name }}</h4>
+
+                                        <div class="meal-meta">
+
+                                            <span class="diet-badge">
+                                                {{ item.meal.get_diet_type_display }}
+                                            </span>
+
+                                        </div>
+
+                                        <p class="meal-description">
+                                            {{ item.meal.description|default:"Freshly prepared with carefully selected ingredients." }}
+                                        </p>
+
+                                        <!-- NUTRITION DETAILS -->
+
+                                        <div class="nutrition-info">
+
+                                            <div class="nutrition-title">
+                                                NUTRITION INFORMATION
+                                            </div>
+
+                                            <div class="nutrition-grid">
+
+                                                {% if item.meal.protein != None %}
+                                                    <div class="nutrition-item">
+                                                        <span>Protein</span>
+                                                        <strong>{{ item.meal.protein }} g</strong>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if item.meal.carbohydrates != None %}
+                                                    <div class="nutrition-item">
+                                                        <span>Carbs</span>
+                                                        <strong>{{ item.meal.carbohydrates }} g</strong>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if item.meal.fats != None %}
+                                                    <div class="nutrition-item">
+                                                        <span>Fats</span>
+                                                        <strong>{{ item.meal.fats }} g</strong>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if item.meal.fiber != None %}
+                                                    <div class="nutrition-item">
+                                                        <span>Fiber</span>
+                                                        <strong>{{ item.meal.fiber }} g</strong>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if item.meal.sugar != None %}
+                                                    <div class="nutrition-item">
+                                                        <span>Sugar</span>
+                                                        <strong>{{ item.meal.sugar }} g</strong>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if item.meal.serving_size %}
+                                                    <div class="nutrition-item">
+                                                        <span>Serving</span>
+                                                        <strong>{{ item.meal.serving_size }}</strong>
+                                                    </div>
+                                                {% endif %}
+
+                                            </div>
+
+                                            {% if not item.meal.protein and not item.meal.carbohydrates and not item.meal.fats and not item.meal.fiber and not item.meal.sugar and not item.meal.serving_size %}
+
+                                                <span style="color:var(--muted);font-size:10px;">
+                                                    Nutrition details coming soon.
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                        <!-- CALORIES -->
+
+                                        <div class="meal-footer">
+
+                                            <span>NutriBite Special</span>
+
+                                            <strong class="calorie-value">
+
+                                                {% if item.meal.calories != None %}
+                                                    {{ item.meal.calories }} kcal
+                                                {% else %}
+                                                    Calories N/A
+                                                {% endif %}
+
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="no-meals">
+
+                <h3>No Meals Available</h3>
+
+                <p>
+                    No meals have been added for this week yet.
+                    Please select another week or check back later.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    {% else %}
+
+        <!-- EMPTY MENU -->
+
+        <div class="empty-menu">
+
+            <div>
+
+                <span class="menu-eyebrow">COMING SOON</span>
+
+                <h3>Something Delicious Is Coming!</h3>
+
+                <p>
+                    Our weekly menu is being prepared.
+                    Please check back soon for fresh and healthy meals.
+                </p>
+
+            </div>
+
+            <img
+                src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&auto=format&fit=crop&q=85"
+                alt="Fresh healthy meal"
+                class="empty-menu-image"
+            >
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+<!-- DAY SLIDER JAVASCRIPT -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const tabs = document.querySelectorAll(".day-tab");
+    const panels = document.querySelectorAll(".day-panel");
+
+    const previousButton = document.getElementById("prevDay");
+    const nextButton = document.getElementById("nextDay");
+
+    if (
+        !tabs.length ||
+        !panels.length ||
+        !previousButton ||
+        !nextButton
+    ) {
+        return;
+    }
+
+    let currentIndex = 0;
+
+    function showDay(index) {
+
+        if (index < 0 || index >= tabs.length) {
+            return;
+        }
+
+        currentIndex = index;
+
+        // Update active day button
+
+        tabs.forEach(function (tab, i) {
+
+            const isActive = i === currentIndex;
+
+            tab.classList.toggle("active", isActive);
+
+            tab.setAttribute(
+                "aria-pressed",
+                isActive ? "true" : "false"
+            );
+
+        });
+
+        // Show only selected day meals
+
+        panels.forEach(function (panel, i) {
+
+            panel.hidden = i !== currentIndex;
+
+        });
+
+        // Navigation buttons
+
+        previousButton.disabled = currentIndex === 0;
+
+        nextButton.disabled = currentIndex === tabs.length - 1;
+
+        // Keep active day visible
+
+        tabs[currentIndex].scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "nearest"
+        });
+
+    }
+
+    // Day button click
+
+    tabs.forEach(function (tab, index) {
+
+        tab.addEventListener("click", function () {
+
+            showDay(index);
+
+        });
+
+    });
+
+    // Previous day
+
+    previousButton.addEventListener("click", function () {
+
+        showDay(currentIndex - 1);
+
+    });
+
+    // Next day
+
+    nextButton.addEventListener("click", function () {
+
+        showDay(currentIndex + 1);
+
+    });
+
+    // Default selected day
+
+    showDay(0);
+
+});
+
+</script>
+
+{% endblock %}

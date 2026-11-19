@@ -1,0 +1,292 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}Create Account | NutriBite{% endblock %}
+{% block main_class %}container-fluid p-0{% endblock %}
+
+{% block content %}
+
+<style>
+    .auth-page {
+        min-height: 85vh;
+        background: var(--page-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 55px 7%;
+    }
+
+    .auth-container {
+        width: 100%;
+        max-width: 1050px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: var(--surface);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        box-shadow: 0 12px 35px var(--shadow);
+    }
+
+    .auth-visual {
+        min-height: 620px;
+        padding: 45px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        background:
+            linear-gradient(rgba(10,35,23,.25),rgba(5,20,12,.92)),
+            url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1000&auto=format&fit=crop&q=85')
+            center/cover;
+    }
+
+    .auth-visual span {
+        color: #e3c17d;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 3px;
+    }
+
+    .auth-visual h2 {
+        color: white;
+        font-family: Georgia, serif;
+        font-size: clamp(30px, 4vw, 42px);
+        line-height: 1.25;
+        margin: 15px 0;
+    }
+
+    .auth-visual p {
+        color: #e1e5df;
+        font-size: 14px;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .auth-form-area {
+        padding: 45px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .auth-eyebrow {
+        color: var(--gold);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2.5px;
+    }
+
+    .auth-form-area h1 {
+        color: var(--heading);
+        font-family: Georgia, serif;
+        font-size: 36px;
+        margin: 12px 0 8px;
+    }
+
+    .auth-description {
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 25px;
+    }
+
+    .auth-form-area label {
+        display: block;
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .auth-form-area input {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 9px;
+        border: 1px solid var(--border);
+        background: var(--input-bg);
+        color: var(--input-text);
+        outline: none;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .auth-form-area input:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(198,155,82,.15);
+    }
+
+    .auth-field {
+        margin-bottom: 14px;
+    }
+
+    .auth-help {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.6;
+        margin-top: 4px;
+    }
+
+    .auth-errors {
+        color: #d9534f;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .auth-submit {
+        width: 100%;
+        border: none;
+        border-radius: 30px;
+        padding: 14px;
+        background: var(--gold);
+        color: #17130c;
+        font-weight: 700;
+        font-size: 14px;
+        transition: .3s ease;
+        margin-top: 10px;
+    }
+
+    .auth-submit:hover {
+        background: var(--gold-light);
+        transform: translateY(-2px);
+    }
+
+    .auth-login {
+        color: var(--muted);
+        text-align: center;
+        font-size: 13px;
+        margin-top: 22px;
+    }
+
+    .auth-login a {
+        color: var(--gold);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .auth-login a:hover {
+        text-decoration: underline;
+    }
+
+    .auth-error-box {
+        background: #f8dddd;
+        color: #a12e2e;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        margin-bottom: 16px;
+    }
+
+    :root[data-theme="dark"] .auth-visual {
+        background:
+            linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.94)),
+            url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1000&auto=format&fit=crop&q=85')
+            center/cover;
+    }
+
+    :root[data-theme="dark"] .auth-error-box {
+        background: #482323;
+        color: #ffb4b4;
+    }
+
+    @media(max-width: 768px) {
+        .auth-page {
+            padding: 35px 5%;
+        }
+
+        .auth-container {
+            grid-template-columns: 1fr;
+            max-width: 520px;
+        }
+
+        .auth-visual {
+            min-height: 260px;
+            padding: 30px;
+        }
+
+        .auth-form-area {
+            padding: 35px 28px;
+        }
+    }
+</style>
+
+<section class="auth-page">
+
+    <div class="auth-container">
+
+        <!-- LEFT VISUAL -->
+        <div class="auth-visual">
+
+            <span>JOIN THE NUTRIBITE FAMILY</span>
+
+            <h2>Start Your<br>Healthy Journey.</h2>
+
+            <p>
+                Create your account and discover a better way
+                to enjoy fresh, balanced and nourishing meals.
+            </p>
+
+        </div>
+
+        <!-- RIGHT FORM -->
+        <div class="auth-form-area">
+
+            <span class="auth-eyebrow">A FRESH START</span>
+
+            <h1>Create Account</h1>
+
+            <p class="auth-description">
+                Join NutriBite and make healthy eating easier.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="auth-error-box">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+
+                    <div class="auth-field">
+
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <div class="auth-help">
+                                {{ field.help_text|safe }}
+                            </div>
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <div class="auth-errors">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+                <button type="submit" class="auth-submit">
+                    Create My Account →
+                </button>
+
+            </form>
+
+            <div class="auth-login">
+                Already have an account?
+                <a href="{% url 'login' %}">Login Now</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

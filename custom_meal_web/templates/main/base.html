@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}NutriBite | Fresh Food, Better Living{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <script>
+        const savedTheme = localStorage.getItem("nutribite-theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+    </script>
+
+    <style>
+        
+:root {
+    /* LIGHT THEME - FOREST GREEN + CREAM */
+    --page-bg: #f7f5ed;
+    --surface: #ffffff;
+    --surface-secondary: #eef0e9;
+    --navbar-bg: #123b2a;
+    --footer-bg: #123b2a;
+    --heading: #18382d;
+    --text: #314c3c;
+    --muted: #78847c;
+    --gold: #c69b52;
+    --gold-light: #e5c17c;
+    --border: #e2e2d8;
+    --input-bg: #ffffff;
+    --input-text: #263b30;
+    --table-head: #e8eee5;
+    --alert-bg: #f5f0df;
+    --alert-text: #66532c;
+    --shadow: rgba(0,0,0,.10);
+}
+
+:root[data-theme="dark"] {
+    /* DARK THEME - BLACK + LUXURY GOLD */
+    --page-bg: #101010;
+    --surface: #181818;
+    --surface-secondary: #222222;
+    --navbar-bg: #0b0b0b;
+    --footer-bg: #090909;
+    --heading: #f4eee2;
+    --text: #eeeeee;
+    --muted: #aaaaaa;
+    --gold: #c9a45c;
+    --gold-light: #e0bf7a;
+    --border: #333333;
+    --input-bg: #202020;
+    --input-text: #ffffff;
+    --table-head: #222222;
+    --alert-bg: #252116;
+    --alert-text: #f1d99e;
+    --shadow: rgba(0,0,0,.3);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--page-bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background .3s ease, color .3s ease;
+}
+
+/* NAVBAR */
+
+.custom-navbar {
+    background: var(--navbar-bg);
+    padding: 10px 0;
+    position: relative;
+    z-index: 10;
+    border-bottom: 1px solid rgba(201,164,92,.3);
+    box-shadow: 0 5px 25px var(--shadow);
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    color: white !important;
+}
+
+.brand-dot {
+    color: var(--gold);
+}
+
+.navbar-nav {
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-nav .nav-link {
+    position: relative;
+    color: rgba(255,255,255,.85) !important;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 13px !important;
+    transition: .3s ease;
+}
+
+.navbar-nav .nav-link:not(.register-link)::after {
+    content: "";
+    position: absolute;
+    left: 13px;
+    bottom: 5px;
+    width: 0;
+    height: 2px;
+    background: var(--gold);
+    transition: width .3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--gold-light) !important;
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: calc(100% - 26px);
+}
+
+.register-link {
+    background: var(--gold);
+    color: #111 !important;
+    border-radius: 4px;
+    padding: 11px 22px !important;
+    margin-left: 5px;
+}
+
+.register-link:hover {
+    background: var(--gold-light);
+    color: #111 !important;
+    transform: translateY(-2px);
+}
+
+.login-link {
+    border: 1px solid rgba(201,164,92,.55);
+    border-radius: 4px;
+}
+
+.logout-btn {
+    background: transparent;
+    border: 0;
+    color: rgba(255,255,255,.85);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 13px;
+    transition: .3s;
+}
+
+.logout-btn:hover {
+    color: var(--gold);
+}
+
+.navbar-toggler {
+    border-color: var(--gold);
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 2px rgba(201,164,92,.2);
+}
+
+/* THEME SWITCH */
+
+.theme-toggle {
+    border: 1px solid var(--gold);
+    background: transparent;
+    color: #fff;
+    border-radius: 25px;
+    padding: 8px 15px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .3s ease;
+    white-space: nowrap;
+}
+
+.theme-toggle:hover {
+    background: var(--gold);
+    color: #111;
+}
+
+/* MAIN CONTENT */
+
+main {
+    flex: 1;
+}
+
+.main-container {
+    max-width: 1200px;
+    min-height: 75vh;
+    padding-top: 45px;
+    padding-bottom: 65px;
+}
+
+h1, h2, h3, h4 {
+    color: var(--heading);
+    font-weight: 700;
+}
+
+h1, h2 {
+    font-family: 'Playfair Display', serif;
+}
+
+p {
+    color: var(--muted);
+}
+
+/* CARDS */
+
+.card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 8px 28px var(--shadow);
+    overflow: hidden;
+    transition: .3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold);
+}
+
+.card-body {
+    padding: 25px;
+}
+
+/* BUTTONS */
+
+.btn {
+    border-radius: 5px;
+    padding: 11px 20px;
+    font-weight: 600;
+    transition: .25s ease;
+}
+
+.btn-primary, .btn-warning {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #111;
+}
+
+.btn-primary:hover, .btn-warning:hover {
+    background: var(--gold-light);
+    border-color: var(--gold-light);
+    color: #111;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: var(--surface-secondary);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: var(--surface);
+    color: var(--gold);
+    border-color: var(--gold);
+}
+
+/* FORMS */
+
+.form-control, .form-select {
+    background: var(--input-bg);
+    color: var(--input-text);
+    border-radius: 5px;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+}
+
+.form-control::placeholder {
+    color: var(--muted);
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 .2rem rgba(201,164,92,.15);
+}
+
+.form-select option {
+    background: var(--input-bg);
+    color: var(--input-text);
+}
+
+/* TABLES */
+
+.table {
+    vertical-align: middle;
+    color: var(--text);
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text);
+    --bs-table-border-color: var(--border);
+}
+
+.table thead th {
+    color: var(--gold);
+    background: var(--table-head);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 15px;
+}
+
+.table tbody td {
+    padding: 15px;
+    color: var(--text);
+}
+
+/* BADGES */
+
+.badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* ALERTS */
+
+.alert {
+    border: 1px solid rgba(201,164,92,.3);
+    border-radius: 7px;
+    padding: 15px 18px;
+    margin-bottom: 22px;
+    background: var(--alert-bg);
+    color: var(--alert-text);
+}
+
+/* FOOTER */
+
+.custom-footer {
+    background: var(--footer-bg);
+    color: rgba(255,255,255,.75);
+    padding: 48px 0 20px;
+    border-top: 1px solid rgba(201,164,92,.25);
+}
+
+.footer-brand {
+    font-family: 'Playfair Display', serif;
+    color: white;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.footer-brand span {
+    color: var(--gold);
+}
+
+.footer-description {
+    color: #aaa;
+    font-size: 14px;
+    line-height: 1.8;
+    max-width: 330px;
+    margin-top: 12px;
+}
+
+.footer-heading {
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 17px;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.footer-links a {
+    color: #aaa;
+    text-decoration: none;
+    font-size: 13px;
+    transition: .25s;
+}
+
+.footer-links a:hover {
+    color: var(--gold);
+    padding-left: 4px;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,.15);
+    margin-top: 35px;
+    padding-top: 18px;
+    color: #999;
+    font-size: 12px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 991px) {
+    .navbar-nav {
+        align-items: stretch;
+        padding-top: 15px;
+        gap: 5px;
+    }
+
+    .navbar-nav .nav-link,
+    .logout-btn {
+        width: 100%;
+        text-align: left;
+    }
+
+    .register-link {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+
+    .main-container {
+        padding-top: 28px;
+    }
+
+    .theme-toggle {
+        align-self: flex-start;
+        margin-top: 10px;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+    <div class="container">
+
+        <a class="navbar-brand" href="{% url 'home' %}">
+            NutriBite<span class="brand-dot">.</span>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+            <div class="navbar-nav ms-auto">
+
+                <a class="nav-link" href="{% url 'home' %}">Home</a>
+                <a class="nav-link" href="{% url 'menu' %}">Our Menu</a>
+
+                {% if user.is_authenticated %}
+
+                    <a class="nav-link" href="{% url 'subscribe' %}">
+                        Subscribe
+                    </a>
+
+                    <a class="nav-link" href="{% url 'my_subscription' %}">
+                        My Subscription
+                    </a>
+
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">
+                            Logout
+                        </button>
+                    </form>
+
+
+                {% else %}
+
+                    <a class="nav-link login-link" href="{% url 'login' %}">
+                        Login
+                    </a>
+
+                    <a class="nav-link register-link" href="{% url 'register' %}">
+                        Get Started
+                    </a>
+
+                {% endif %}
+
+                <button type="button" class="theme-toggle" id="themeToggle">
+                        <span id="themeIcon">🌙</span>
+                        <span id="themeLabel">Dark Mode</span>
+                </button>
+
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="{% block main_class %}container main-container{% endblock %}">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+                 role="alert">
+
+                {{ message }}
+
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close">
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+<footer class="custom-footer">
+    <div class="container">
+
+        <div class="row g-4">
+
+            <div class="col-lg-6">
+                <div class="footer-brand">
+                    NutriBite<span>.</span>
+                </div>
+
+                <p class="footer-description">
+                    Fresh ingredients, thoughtfully prepared meals
+                    and healthy choices made easier every day.
+                </p>
+            </div>
+
+            <div class="col-6 col-lg-3">
+                <h6 class="footer-heading">Explore</h6>
+
+                <div class="footer-links">
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'menu' %}">Our Menu</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'my_subscription' %}">My Subscription</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+                <h6 class="footer-heading">Get Started</h6>
+
+                <div class="footer-links">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'subscribe' %}">Subscribe Now</a>
+                    {% else %}
+                        <a href="{% url 'login' %}">Login</a>
+                        <a href="{% url 'register' %}">Create Account</a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom text-center">
+            © {% now "Y" %} NutriBite. Eat Fresh. Live Healthy.
+        </div>
+
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggle = document.getElementById("themeToggle");
+    const icon = document.getElementById("themeIcon");
+    const label = document.getElementById("themeLabel");
+
+    function updateThemeButton() {
+        const theme = document.documentElement.getAttribute("data-theme");
+
+        if (theme === "dark") {
+            icon.textContent = "☀️";
+            label.textContent = "Light Mode";
+            toggle.setAttribute("aria-pressed", "true");
+        } else {
+            icon.textContent = "🌙";
+            label.textContent = "Dark Mode";
+            toggle.setAttribute("aria-pressed", "false");
+        }
+    }
+
+    updateThemeButton();
+
+    toggle.addEventListener("click", function () {
+        const currentTheme =
+            document.documentElement.getAttribute("data-theme");
+
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        document.documentElement.setAttribute("data-theme", newTheme);
+
+        localStorage.setItem("nutribite-theme", newTheme);
+
+        updateThemeButton();
+    });
+
+});
+</script>
+
+</body>
+</html>

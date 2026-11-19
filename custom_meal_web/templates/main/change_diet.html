@@ -1,0 +1,265 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}Update Diet | NutriBite{% endblock %}
+{% block main_class %}container-fluid p-0{% endblock %}
+
+{% block content %}
+
+<style>
+    .diet-page {
+        min-height: 80vh;
+        padding: 65px 20px;
+        background: var(--page-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .diet-container {
+        width: 100%;
+        max-width: 750px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 45px;
+        box-shadow: 0 12px 35px var(--shadow);
+    }
+
+    .diet-eyebrow {
+        color: var(--gold);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-align: center;
+        display: block;
+    }
+
+    .diet-title {
+        text-align: center;
+        font-family: Georgia, serif;
+        font-size: 38px;
+        color: var(--heading);
+        margin: 12px 0;
+    }
+
+    .diet-description {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 35px;
+    }
+
+    .current-diet {
+        background: var(--surface-secondary);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 17px 20px;
+        margin-bottom: 30px;
+    }
+
+    .current-diet small {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 1px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .current-diet strong {
+        color: var(--gold);
+        font-size: 16px;
+    }
+
+    .diet-label {
+        color: var(--heading);
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .diet-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .diet-option {
+        position: relative;
+    }
+
+    .diet-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .diet-option label {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        transition: .25s ease;
+        min-height: 75px;
+    }
+
+    .diet-option label:hover {
+        border-color: var(--gold);
+        transform: translateY(-2px);
+    }
+
+    .diet-option input:checked + label {
+        border: 2px solid var(--gold);
+        background: var(--surface-secondary);
+        box-shadow: 0 4px 15px var(--shadow);
+    }
+
+    .diet-icon {
+        font-size: 25px;
+    }
+
+    .diet-option label span:last-child {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .diet-option input:focus-visible + label {
+        outline: 2px solid var(--gold);
+        outline-offset: 3px;
+    }
+
+    .diet-submit {
+        width: 100%;
+        padding: 14px;
+        background: var(--gold);
+        color: #17130c;
+        border: none;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 700;
+        transition: .3s ease;
+    }
+
+    .diet-submit:hover {
+        background: var(--gold-light);
+        transform: translateY(-2px);
+    }
+
+    .diet-back {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+    }
+
+    .diet-back:hover {
+        color: var(--gold);
+    }
+
+    @media(max-width: 576px) {
+        .diet-container {
+            padding: 30px 22px;
+        }
+
+        .diet-title {
+            font-size: 30px;
+        }
+
+        .diet-options {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<section class="diet-page">
+
+    <div class="diet-container">
+
+        <span class="diet-eyebrow">YOUR NUTRITION, YOUR WAY</span>
+
+        <h1 class="diet-title">Update Your Diet</h1>
+
+        <p class="diet-description">
+            Your preferences matter. Choose the diet that best
+            suits your lifestyle and let NutriBite take care of the rest.
+        </p>
+
+        <div class="current-diet">
+            <small>CURRENT DIET PREFERENCE</small>
+            <strong>{{ sub.get_diet_preference_display }}</strong>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label class="diet-label">
+                Choose Your New Diet Preference
+            </label>
+
+            <div class="diet-options">
+
+                {% for value,label in choices %}
+
+                    <div class="diet-option">
+
+                        <input
+                            type="radio"
+                            name="diet"
+                            id="diet_{{ forloop.counter }}"
+                            value="{{ value }}"
+                            {% if sub.diet_preference == value %}checked{% endif %}
+                            required
+                        >
+
+                        <label for="diet_{{ forloop.counter }}">
+
+                            <span class="diet-icon">
+                                {% if value == "VEG" %}
+                                    🥗
+                                {% elif value == "NON_VEG" %}
+                                    🍗
+                                {% elif value == "VEGAN" %}
+                                    🌱
+                                {% elif value == "JAIN" %}
+                                    🥬
+                                {% else %}
+                                    🍽️
+                                {% endif %}
+                            </span>
+
+                            <span>{{ label }}</span>
+
+                        </label>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            <button type="submit" class="diet-submit">
+                Save Changes →
+            </button>
+
+        </form>
+
+        <a href="{% url 'my_subscription' %}" class="diet-back">
+            ← Back to My Subscription
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

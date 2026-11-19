@@ -1,0 +1,531 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}{{ category_title }} | NutriBite{% endblock %}
+{% block main_class %}container-fluid p-0{% endblock %}
+
+{% block content %}
+
+<style>
+
+.category-page {
+    min-height: 85vh;
+    padding: 25px 7%;
+    background: var(--page-bg);
+}
+
+/* HEADER */
+
+.category-header {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.category-header span {
+    color: var(--gold);
+    font-size: 12px;
+    letter-spacing: 3px;
+    font-weight: 700;
+}
+
+.category-header h1 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: clamp(32px, 4vw, 45px);
+    margin: 12px 0;
+}
+
+.category-header p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.category-divider {
+    width: 60px;
+    height: 3px;
+    background: var(--gold);
+    margin: 18px auto;
+}
+
+
+/* SEARCH & FILTER */
+
+.meal-filter-section {
+    max-width: 1200px;
+    margin: 0 auto 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.meal-search {
+    flex: 1;
+    min-width: 220px;
+    max-width: 450px;
+    padding: 13px 18px;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    font-size: 13px;
+}
+
+.meal-search:focus {
+    border-color: var(--gold);
+}
+
+.meal-diet-filter {
+    padding: 13px 18px;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.clear-filters {
+    padding: 12px 19px;
+    border: 1px solid var(--gold);
+    border-radius: 25px;
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.clear-filters:hover {
+    background: var(--gold);
+    color: white;
+}
+
+.no-search-results {
+    display: none;
+    text-align: center;
+    padding: 40px 15px;
+    color: var(--muted);
+}
+
+@media(max-width: 600px) {
+    .meal-filter-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .meal-search {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+
+/* MEAL GRID */
+
+.category-meal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.category-meal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px var(--shadow);
+    transition: .3s ease;
+}
+
+.category-meal-card:hover {
+    transform: translateY(-7px);
+    border-color: var(--gold);
+}
+
+.category-meal-card img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+    display: block;
+}
+
+.meal-image-placeholder {
+    height: 230px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 55px;
+    background: var(--surface-secondary);
+}
+
+.category-meal-info {
+    padding: 22px;
+}
+
+.category-meal-info h3 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: 21px;
+    margin-bottom: 10px;
+}
+
+.category-meal-info p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.meal-diet-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--surface-secondary);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.meal-serving {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 12px;
+}
+
+.meal-nutrition {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    margin-top: 15px;
+}
+
+.meal-nutrition div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.meal-nutrition strong {
+    color: var(--heading);
+    font-size: 15px;
+}
+
+.meal-nutrition span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* EMPTY STATE */
+
+.no-meals {
+    text-align: center;
+    padding: 65px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    max-width: 650px;
+    margin: auto;
+}
+
+.no-meals h3 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+}
+
+.no-meals p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 900px) {
+    .category-meal-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 600px) {
+    .category-page {
+        padding: 45px 18px;
+    }
+
+    .category-meal-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.view-meal-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: var(--gold);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 700;
+    transition: .3s ease;
+}
+
+.view-meal-btn:hover {
+    background: var(--gold-light);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.category-back-btn {
+    display: block;
+    width: fit-content;
+    margin: 30px 0 30px auto;
+    padding: 10px 22px;
+    border: 1px solid var(--gold);
+    border-radius: 25px;
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: .3s ease;
+}
+
+.category-back-btn:hover {
+    background: var(--gold);
+    color: #fff;
+    transform: translateX(-4px);
+}
+
+</style>
+
+
+<section class="category-page">
+
+    <div class="category-header">
+
+        <span>FRESH & DELICIOUS</span>
+
+        <h1>{{ category_title }}</h1>
+
+        <div class="category-divider"></div>
+
+        <p>
+            Explore our delicious collection of
+            {{ category_title|lower }} prepared with care.
+        </p>
+
+    </div>
+
+
+    <div class="meal-filter-section">
+
+        <input
+            type="text"
+            id="mealSearch"
+            class="meal-search"
+            placeholder="🔍 Search your favourite meal..."
+        >
+
+        <select id="dietFilter" class="meal-diet-filter">
+            <option value="all">All Diets</option>
+            <option value="veg">Vegetarian</option>
+            <option value="non_veg">Non-Vegetarian</option>
+            <option value="high_protein">High Protein</option>
+        </select>
+
+        <select id="sortMeals" class="meal-diet-filter">
+            <option value="default">Sort By</option>
+            <option value="name_asc">Name: A–Z</option>
+            <option value="name_desc">Name: Z–A</option>
+            <option value="calories_asc">Calories: Low to High</option>
+            <option value="calories_desc">Calories: High to Low</option>
+        </select>
+
+        <button
+            type="button"
+            class="clear-filters"
+            onclick="clearMealFilters()"
+        >
+            Clear Filters
+        </button>
+
+    </div>
+
+
+    {% if meals %}
+
+        <div class="category-meal-grid">
+
+            {% for meal in meals %}
+
+                <div class="category-meal-card"
+                    data-name="{{ meal.name|lower }}"
+                    data-diet="{{ meal.diet_type }}"
+                    data-calories="{{ meal.calories|default_if_none:999999 }}"
+                >
+
+                    {% if meal.image %}
+
+                        <img
+                            src="{{ meal.image.url }}"
+                            alt="{{ meal.name }}"
+                        >
+
+                    {% else %}
+
+                        <div class="meal-image-placeholder">
+                            🍽️
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="category-meal-info">
+
+                        <span class="meal-diet-tag">
+                            {{ meal.get_diet_type_display }}
+                        </span>
+
+                        <h3>{{ meal.name }}</h3>
+                        <p>{{ meal.description }}</p>
+
+                        <a href="{% url 'meal_detail' meal.id %}" class="view-meal-btn">View Details →</a>
+
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+
+        </div>
+
+        <div class="no-search-results" id="noSearchResults">
+            <h3>No Meals Found</h3>
+            <p>Try another meal name or change your diet filter.</p>
+        </div>
+
+    {% else %}
+
+        <div class="no-meals">
+
+            <h3>Coming Soon!</h3>
+
+            <p>
+                We're preparing delicious options for this category.
+                Check back soon!
+            </p>
+
+        </div>
+
+    {% endif %}
+
+    <div>
+        <a href="{% url 'subscribe' %}" class="category-back-btn">← Back</a>
+    </div>
+
+</section>
+
+
+<script>
+
+
+    const mealSearch = document.getElementById("mealSearch");
+    const dietFilter = document.getElementById("dietFilter");
+    const sortMeals = document.getElementById("sortMeals");
+
+    function filterMeals() {
+
+        const searchValue = mealSearch.value.toLowerCase().trim();
+        const dietValue = dietFilter.value;
+        const sortValue = sortMeals.value;
+
+        const grid = document.querySelector(".category-meal-grid");
+
+        const cards = Array.from(
+            document.querySelectorAll(".category-meal-card")
+        );
+
+        let visibleCards = [];
+
+        cards.forEach(card => {
+
+            const mealName = card.dataset.name;
+            const mealDiet = card.dataset.diet;
+
+            const matchesSearch = mealName.includes(searchValue);
+
+            const matchesDiet =
+                dietValue === "all" || mealDiet === dietValue;
+
+            if (matchesSearch && matchesDiet) {
+                card.style.display = "";
+                visibleCards.push(card);
+            } else {
+                card.style.display = "none";
+            }
+
+        });
+
+        // SORTING
+
+        visibleCards.sort((a, b) => {
+
+            const nameA = a.dataset.name;
+            const nameB = b.dataset.name;
+
+            const caloriesA = Number(a.dataset.calories);
+            const caloriesB = Number(b.dataset.calories);
+
+            switch (sortValue) {
+
+                case "name_asc":
+                    return nameA.localeCompare(nameB);
+
+                case "name_desc":
+                    return nameB.localeCompare(nameA);
+
+                case "calories_asc":
+                    return caloriesA - caloriesB;
+
+                case "calories_desc":
+                    return caloriesB - caloriesA;
+
+                default:
+                    return cards.indexOf(a) - cards.indexOf(b);
+            }
+
+        });
+
+        visibleCards.forEach(card => grid.appendChild(card));
+
+        document.getElementById("noSearchResults").style.display =
+            visibleCards.length === 0 ? "block" : "none";
+    }
+
+    function clearMealFilters() {
+
+        mealSearch.value = "";
+        dietFilter.value = "all";
+        sortMeals.value = "default";
+
+        filterMeals();
+    }
+
+    mealSearch.addEventListener("input", filterMeals);
+    dietFilter.addEventListener("change", filterMeals);
+    sortMeals.addEventListener("change", filterMeals);
+
+
+</script>
+
+
+{% endblock %}

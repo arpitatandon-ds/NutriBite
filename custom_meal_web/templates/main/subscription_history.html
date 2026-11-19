@@ -1,0 +1,332 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}Subscription History | NutriBite{% endblock %}
+{% block main_class %}container-fluid p-0{% endblock %}
+
+{% block content %}
+
+<style>
+.history-page {
+    min-height: 85vh;
+    padding: 50px 7%;
+    background: var(--page-bg);
+}
+
+.history-header {
+    margin-bottom: 30px;
+}
+
+.history-header span {
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.history-header h1 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: 34px;
+    margin: 12px 0;
+}
+
+.history-header p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.history-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 18px var(--shadow);
+}
+
+.history-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    padding-bottom: 17px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+}
+
+.history-top h3 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: 21px;
+    margin: 0;
+}
+
+.history-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.history-detail {
+    background: var(--surface-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.history-detail span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-bottom: 7px;
+}
+
+.history-detail strong {
+    color: var(--heading);
+    font-size: 14px;
+}
+
+.history-badge {
+    display: inline-block;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.history-active {
+    background: #dcefe1;
+    color: #23643a;
+}
+
+.history-paused {
+    background: #fff0ce;
+    color: #805b13;
+}
+
+.history-cancelled {
+    background: #e5e5e5;
+    color: #555;
+}
+
+.history-paid {
+    background: #dcefe1;
+    color: #23643a;
+}
+
+.history-unpaid {
+    background: #f8dddd;
+    color: #a12e2e;
+}
+
+.history-empty {
+    text-align: center;
+    padding: 55px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    color: var(--muted);
+}
+
+.history-empty h3 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    margin: 15px 0 8px;
+}
+
+.history-btn {
+    display: inline-block;
+    margin-top: 25px;
+    text-decoration: none;
+    background: var(--gold);
+    color: #17130c;
+    padding: 11px 22px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+:root[data-theme="dark"] .history-active,
+:root[data-theme="dark"] .history-paid {
+    background: #193b28;
+    color: #a6e3b6;
+}
+
+:root[data-theme="dark"] .history-paused {
+    background: #41351e;
+    color: #f1d28c;
+}
+
+:root[data-theme="dark"] .history-cancelled {
+    background: #333;
+    color: #ccc;
+}
+
+:root[data-theme="dark"] .history-unpaid {
+    background: #482323;
+    color: #ffb4b4;
+}
+
+@media(max-width: 600px) {
+    .history-page {
+        padding: 35px 5%;
+    }
+
+    .history-details {
+        grid-template-columns: 1fr;
+    }
+
+    .history-card {
+        padding: 18px;
+    }
+}
+
+.history-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border: 1px solid rgba(220, 70, 70, 0.25);
+    background: rgba(220, 70, 70, 0.08);
+    color: #c94b4b;
+
+    padding: 10px 18px;
+    border-radius: 30px;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.history-delete-btn:hover {
+    background: #c94b4b;
+    color: #fff;
+    border-color: #c94b4b;
+    box-shadow: 0 5px 15px rgba(201, 75, 75, 0.22);
+    transform: translateY(-2px);
+}
+</style>
+
+<section class="history-page">
+
+    <div class="history-header">
+        <span>YOUR NUTRIBITE JOURNEY</span>
+        <h1>Subscription History</h1>
+        <p>Keep track of all your past and current subscriptions.</p>
+    </div>
+
+    {% if subscriptions %}
+
+        {% for s in subscriptions %}
+
+            <div class="history-card">
+
+                <div class="history-top">
+
+                    <h3>Subscription #{{ s.id }}</h3>
+
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+
+                        {% if not s.active %}
+                            <span class="history-badge history-cancelled">
+                                Cancelled
+                            </span>
+
+                            <form method="POST"
+                                action="{% url 'delete_subscription_history' s.id %}"
+                                onsubmit="return confirm('Are you sure you want to permanently delete this subscription history and its related orders?');">
+
+                                {% csrf_token %}
+
+                                <button type="submit" class="history-delete-btn">
+                                    <span>🗑</span>
+                                    <span>Delete History</span>
+                                </button>
+
+                            </form>
+
+                        {% elif s.paused %}
+                            <span class="history-badge history-paused">
+                                Paused
+                            </span>
+                        {% else %}
+                            <span class="history-badge history-active">
+                                Active
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="history-details">
+
+                    <div class="history-detail">
+                        <span>DIET PREFERENCE</span>
+                        <strong>{{ s.get_diet_preference_display }}</strong>
+                    </div>
+
+                    <div class="history-detail">
+                        <span>SELECTED DAYS</span>
+                        <strong>{{ s.selected_days }}</strong>
+                    </div>
+
+                    <div class="history-detail">
+                        <span>CREATED ON</span>
+                        <strong>{{ s.created_at|date:"d M Y, h:i A" }}</strong>
+                    </div>
+
+                    <div class="history-detail">
+                        <span>CANCELLED ON</span>
+                        <strong>
+                            {% if s.cancelled_at %}
+                                {{ s.cancelled_at|date:"d M Y, h:i A" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="history-detail">
+                        <span>PAYMENT STATUS</span>
+
+                        {% if s.paid %}
+                            <strong class="history-badge history-paid">Paid</strong>
+                        {% else %}
+                            <strong class="history-badge history-unpaid">Unpaid</strong>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="history-empty">
+            <div style="font-size:45px;">📋</div>
+            <h3>No Subscription History Yet</h3>
+            <p>Your subscriptions will appear here once you create one.</p>
+
+            <a href="{% url 'subscribe' %}" class="history-btn">
+                Create Subscription →
+            </a>
+        </div>
+
+    {% endif %}
+
+    <a href="{% url 'my_subscription' %}" class="history-btn">
+        ← Back to My Subscription
+    </a>
+
+</section>
+
+{% endblock %}

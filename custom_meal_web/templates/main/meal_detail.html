@@ -1,0 +1,250 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}{{ meal.name }} | NutriBite{% endblock %}
+{% block main_class %}container-fluid p-0{% endblock %}
+
+{% block content %}
+
+<style>
+
+.meal-detail-page {
+    background: var(--page-bg);
+    min-height: 90vh;
+    padding: 65px 7%;
+}
+
+.meal-detail-wrapper {
+    max-width: 1150px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 55px;
+    align-items: center;
+}
+
+.meal-detail-image {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px var(--shadow);
+}
+
+.meal-detail-placeholder {
+    height: 450px;
+    border-radius: 20px;
+    background: var(--surface-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 90px;
+}
+
+.meal-detail-info .eyebrow {
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.meal-detail-info h1 {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: clamp(32px, 4vw, 45px);
+    margin: 15px 0;
+}
+
+.meal-detail-info .description {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.9;
+    margin: 20px 0;
+}
+
+.meal-detail-tag {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 25px;
+    background: var(--surface-secondary);
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.meal-serving-detail {
+    color: var(--text);
+    font-size: 14px;
+    margin-top: 18px;
+}
+
+.detail-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+}
+
+.nutrition-heading {
+    color: var(--heading);
+    font-family: Georgia, serif;
+    font-size: 23px;
+    margin-bottom: 20px;
+}
+
+.nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 13px;
+}
+
+.nutrition-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 10px;
+    text-align: center;
+}
+
+.nutrition-item strong {
+    display: block;
+    color: var(--heading);
+    font-size: 18px;
+    margin-bottom: 7px;
+}
+
+.nutrition-item span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.back-category {
+    display: inline-block;
+    margin-top: 30px;
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.back-category:hover {
+    color: var(--heading);
+}
+
+@media(max-width: 800px) {
+    .meal-detail-page {
+        padding: 40px 20px;
+    }
+
+    .meal-detail-wrapper {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .meal-detail-image,
+    .meal-detail-placeholder {
+        height: 320px;
+    }
+}
+
+</style>
+
+
+<section class="meal-detail-page">
+
+    <div class="meal-detail-wrapper">
+
+        <div>
+
+            {% if meal.image %}
+
+                <img
+                    src="{{ meal.image.url }}"
+                    alt="{{ meal.name }}"
+                    class="meal-detail-image"
+                >
+
+            {% else %}
+
+                <div class="meal-detail-placeholder">
+                    🍽️
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="meal-detail-info">
+
+            <span class="eyebrow">NUTRIBITE SPECIAL</span>
+
+            <h1>{{ meal.name }}</h1>
+
+            <span class="meal-detail-tag">
+                {{ meal.get_diet_type_display }}
+            </span>
+
+            <p class="description">
+                {{ meal.description|default:"A delicious and wholesome meal prepared for you." }}
+            </p>
+
+            {% if meal.serving_size %}
+                <p class="meal-serving-detail">
+                    <strong>Serving Size:</strong> {{ meal.serving_size }}
+                </p>
+            {% endif %}
+
+            <div class="detail-divider"></div>
+
+            <h2 class="nutrition-heading">
+                Nutritional Information
+            </h2>
+
+            <div class="nutrition-grid">
+
+                <div class="nutrition-item">
+                    <strong>{{ meal.calories|default:"—" }}</strong>
+                    <span>Calories</span>
+                </div>
+
+                <div class="nutrition-item">
+                    <strong>{{ meal.protein|default:"—" }}g</strong>
+                    <span>Protein</span>
+                </div>
+
+                <div class="nutrition-item">
+                    <strong>{{ meal.carbohydrates|default:"—" }}g</strong>
+                    <span>Carbs</span>
+                </div>
+
+                <div class="nutrition-item">
+                    <strong>{{ meal.fats|default:"—" }}g</strong>
+                    <span>Fats</span>
+                </div>
+
+                <div class="nutrition-item">
+                    <strong>{{ meal.fiber|default:"—" }}g</strong>
+                    <span>Fiber</span>
+                </div>
+
+                <div class="nutrition-item">
+                    <strong>{{ meal.sugar|default:"—" }}g</strong>
+                    <span>Sugar</span>
+                </div>
+
+            </div>
+
+            <a
+                href="{% url 'meal_category' meal.category %}"
+                class="back-category"
+            >
+                ← Back to {{ meal.get_category_display }}
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
