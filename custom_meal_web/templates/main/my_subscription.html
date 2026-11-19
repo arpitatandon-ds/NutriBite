@@ -282,9 +282,7 @@
         color: #17130c;
     }
 
-    
     /* MEAL ORDERS */
-
     .recent-orders {
         margin-top: 38px;
     }
@@ -376,9 +374,54 @@
         font-size: 14px;
     }
 
+    /* DAY-WISE MEAL TABS */
+    .day-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .day-tab {
+        padding: 11px 19px;
+        border: 1px solid var(--border);
+        border-radius: 25px;
+        background: var(--surface);
+        color: var(--heading);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .3s ease;
+    }
+
+    .day-tab:hover {
+        border-color: var(--gold);
+    }
+
+    .day-tab.active {
+        background: var(--gold);
+        color: #17130c;
+        border-color: var(--gold);
+    }
+
+    .day-panel[hidden] {
+        display: none !important;
+    }
+
     @media(max-width: 768px) {
         .order-list {
             grid-template-columns: 1fr;
+        }
+    }
+
+    @media(max-width: 600px) {
+        .day-tabs {
+            gap: 8px;
+        }
+
+        .day-tab {
+            padding: 9px 14px;
+            font-size: 12px;
         }
     }
 
@@ -401,7 +444,6 @@
     }
 
     /* NO SUBSCRIPTION - PREMIUM EMPTY STATE */
-
     .empty-card {
         max-width: 1050px;
         margin: 35px auto;
@@ -491,7 +533,6 @@
         }
     }
 
-
     /* DARK THEME */
     :root[data-theme="dark"] .welcome-banner {
         background: linear-gradient(110deg, #080808, #242019);
@@ -574,7 +615,6 @@
     }
 
     /* MEAL DETAILS MODAL */
-
     .meal-modal {
         display: none;
         position: fixed;
@@ -680,8 +720,6 @@
         padding: 8px 15px;
         font-size: 11px;
     }
-
-    
 </style>
 
 
@@ -691,7 +729,6 @@
 
     <!-- WELCOME BANNER -->
     <div class="welcome-banner">
-
         <div class="welcome-content">
             <span>WELCOME TO YOUR NUTRIBITE DASHBOARD</span>
 
@@ -708,7 +745,6 @@
         <div class="welcome-label">
             ✨ YOUR HEALTHY LIFESTYLE
         </div>
-
     </div>
 
     <!-- OVERVIEW CARDS -->
@@ -716,7 +752,6 @@
 
         <div class="overview-card">
             <div class="overview-icon">🍽️</div>
-
             <div>
                 <span>Total Orders</span>
                 <h3>{{ orders|length }}</h3>
@@ -725,10 +760,8 @@
 
         <div class="overview-card">
             <div class="overview-icon">🥗</div>
-
             <div>
                 <span>Subscription</span>
-
                 <h3 id="overview-subscription-status">
                     {% if not sub.active %}
                         Cancelled
@@ -743,10 +776,8 @@
 
         <div class="overview-card">
             <div class="overview-icon">💳</div>
-
             <div>
                 <span>Payment Status</span>
-
                 <h3 id="overview-payment-status">
                     {% if sub.paid %}
                         Paid
@@ -784,7 +815,6 @@
                 <strong>{{ sub.selected_days }}</strong>
             </div>
 
-            <!-- SUBSCRIPTION STATUS -->
             <div class="subscription-detail">
                 <span>SUBSCRIPTION STATUS</span>
 
@@ -806,7 +836,6 @@
                 {% endif %}
             </div>
 
-            <!-- PAYMENT STATUS -->
             <div class="subscription-detail">
                 <span>PAYMENT STATUS</span>
 
@@ -835,7 +864,6 @@
 
             {% if sub.active %}
 
-                <!-- PAYMENT FORM -->
                 <form method="POST"
                       action="{% url 'toggle_paid' %}"
                       id="payment-form">
@@ -853,10 +881,8 @@
                         {% endif %}
 
                     </button>
-
                 </form>
 
-                <!-- PAUSE / RESUME FORM -->
                 <form method="POST"
                       action="{% url 'toggle_subscription_pause' %}"
                       id="pause-form"
@@ -890,7 +916,6 @@
                     ✎ Edit Subscription
                 </a>
 
-                <!-- CANCEL SUBSCRIPTION -->
                 <form method="POST"
                       action="{% url 'cancel_subscription' %}"
                       onsubmit="return confirm('Are you sure you want to cancel your subscription? This action cannot be undone.');">
@@ -901,7 +926,6 @@
                             class="dashboard-btn danger">
                         ✕ Cancel Subscription
                     </button>
-
                 </form>
 
             {% else %}
@@ -913,7 +937,6 @@
             {% endif %}
 
         </div>
-
     </div>
 
 
@@ -927,7 +950,11 @@
 
         {% if orders %}
 
-            <div class="order-list">
+            <!-- DATE-WISE TABS ARE CREATED BY JAVASCRIPT -->
+            <div class="day-tabs" id="meal-day-tabs"></div>
+
+            <!-- EXISTING ORDER CARDS -->
+            <div class="order-list" id="all-order-cards">
 
                 {% for o in orders %}
 
@@ -1270,10 +1297,159 @@ document.addEventListener("keydown", function(event) {
 
 
 // ======================================
-// PAYMENT AND PAUSE AJAX
+// PAYMENT, PAUSE AND DAY-WISE SCHEDULE
 // ======================================
 
 document.addEventListener("DOMContentLoaded", function() {
+
+
+    // ==================================
+    // DAY-WISE MEAL SCHEDULE
+    // ==================================
+
+    const sourceList = document.getElementById("all-order-cards");
+    const tabsContainer = document.getElementById("meal-day-tabs");
+
+    if (sourceList && tabsContainer) {
+
+        const cards = Array.from(
+            sourceList.querySelectorAll(".order-card")
+        );
+
+        const groupedOrders = new Map();
+
+        // Group existing order cards by delivery date
+        cards.forEach(card => {
+
+            const status = card.querySelector(".order-status");
+
+            if (!status) return;
+
+            const date = status.dataset.orderDate;
+
+            if (!date) return;
+
+            if (!groupedOrders.has(date)) {
+                groupedOrders.set(date, []);
+            }
+
+            groupedOrders.get(date).push(card);
+
+        });
+
+
+        // Sort dates chronologically
+        const sortedDates = Array.from(groupedOrders.keys()).sort();
+
+
+        if (sortedDates.length > 0) {
+
+            const panelsContainer = document.createElement("div");
+            panelsContainer.id = "meal-day-panels";
+
+            sourceList.after(panelsContainer);
+
+            let firstPanel = null;
+
+
+            sortedDates.forEach(date => {
+
+                const dayOrders = groupedOrders.get(date);
+
+                // Format date for tab label
+                const formattedDate = new Date(date + "T00:00:00")
+                    .toLocaleDateString("en-IN", {
+                        weekday: "long",
+                        day: "2-digit",
+                        month: "short"
+                    });
+
+
+                // Create tab
+                const tab = document.createElement("button");
+
+                tab.type = "button";
+                tab.className = "day-tab";
+                tab.textContent = formattedDate;
+
+
+                // Create date panel
+                const panel = document.createElement("div");
+
+                panel.className = "day-panel";
+                panel.hidden = true;
+
+
+                // Create order list for this date
+                const orderList = document.createElement("div");
+
+                orderList.className = "order-list";
+
+
+                // Move existing cards into this date's panel
+                dayOrders.forEach(card => {
+                    orderList.appendChild(card);
+                });
+
+
+                panel.appendChild(orderList);
+
+                panelsContainer.appendChild(panel);
+
+                tabsContainer.appendChild(tab);
+
+
+                if (!firstPanel) {
+                    firstPanel = {
+                        tab: tab,
+                        panel: panel
+                    };
+                }
+
+
+                // Tab click functionality
+                tab.addEventListener("click", function() {
+
+                    tabsContainer
+                        .querySelectorAll(".day-tab")
+                        .forEach(button => {
+                            button.classList.remove("active");
+                        });
+
+
+                    panelsContainer
+                        .querySelectorAll(".day-panel")
+                        .forEach(dayPanel => {
+                            dayPanel.hidden = true;
+                        });
+
+
+                    tab.classList.add("active");
+
+                    panel.hidden = false;
+
+                });
+
+            });
+
+
+            // Show first available date by default
+            if (firstPanel) {
+                firstPanel.tab.click();
+            }
+
+
+            // Remove original list after moving all cards
+            sourceList.remove();
+
+        } else {
+
+            // No valid dates found
+            tabsContainer.remove();
+
+        }
+
+    }
 
 
     // ==================================
@@ -1558,4 +1734,3 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 {% endblock %}
-
